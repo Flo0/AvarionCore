@@ -1,0 +1,7 @@
+name: AvarionCore
+version: ${project.version}
+main: com.gestankbratwurst.avarioncore.AvarionCore
+api-version: 1.15
+authors: [Gestankbratwurst]
+description: Core plugin für Avarioncraft
+depend: [ProtocolLib]
