@@ -17,7 +17,6 @@ import com.gestankbratwurst.avarioncore.util.Msg;
 import com.gestankbratwurst.avarioncore.util.UtilModule;
 import com.gestankbratwurst.avarioncore.util.common.UtilBlock;
 import com.gestankbratwurst.avarioncore.util.items.display.ItemDisplayCompiler;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import lombok.Getter;
@@ -67,7 +66,6 @@ public final class AvarionCore extends JavaPlugin {
 
     this.resourcepackModule = new ResourcepackModule();
     resourcepackModule.enable(this);
-
 
     this.avarionDataManager = new AvarionDataManager(this);
     this.protectionManager = new ProtectionManager(this);
