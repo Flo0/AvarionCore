@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import net.minecraft.server.v1_15_R1.NBTBase;
-import net.minecraft.server.v1_15_R1.NBTTagList;
-import net.minecraft.server.v1_15_R1.NBTTagString;
+import net.minecraft.server.v1_16_R1.NBTBase;
+import net.minecraft.server.v1_16_R1.NBTTagList;
+import net.minecraft.server.v1_16_R1.NBTTagString;
 import org.jetbrains.annotations.NotNull;
 
 /*******************************************************
@@ -50,7 +50,7 @@ public class NBTStringList implements List<String> {
   @NotNull
   @Override
   public Iterator<String> iterator() {
-    final List<String> list = nmsList.stream().map(b -> b.asString()).collect(Collectors.toList());
+    final List<String> list = nmsList.stream().map(NBTBase::asString).collect(Collectors.toList());
     return list.iterator();
   }
 

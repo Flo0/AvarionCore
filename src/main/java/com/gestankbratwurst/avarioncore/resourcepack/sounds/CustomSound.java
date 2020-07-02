@@ -1,11 +1,11 @@
 package com.gestankbratwurst.avarioncore.resourcepack.sounds;
 
-import net.minecraft.server.v1_15_R1.MinecraftKey;
-import net.minecraft.server.v1_15_R1.PacketPlayOutCustomSoundEffect;
-import net.minecraft.server.v1_15_R1.SoundCategory;
-import net.minecraft.server.v1_15_R1.Vec3D;
+import net.minecraft.server.v1_16_R1.MinecraftKey;
+import net.minecraft.server.v1_16_R1.PacketPlayOutCustomSoundEffect;
+import net.minecraft.server.v1_16_R1.SoundCategory;
+import net.minecraft.server.v1_16_R1.Vec3D;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /*******************************************************

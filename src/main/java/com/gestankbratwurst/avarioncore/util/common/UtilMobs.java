@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -37,7 +37,7 @@ public class UtilMobs implements Listener {
       .build();
 
   public static Entity getEntity(int id, World world) {
-    net.minecraft.server.v1_15_R1.Entity nmsEntity = ((CraftWorld) world).getHandle().getEntity(id);
+    net.minecraft.server.v1_16_R1.Entity nmsEntity = ((CraftWorld) world).getHandle().getEntity(id);
     if (nmsEntity != null) {
       return nmsEntity.getBukkitEntity();
     }

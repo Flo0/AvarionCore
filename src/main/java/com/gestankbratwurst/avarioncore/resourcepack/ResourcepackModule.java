@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import net.minecraft.server.v1_15_R1.SoundCategory;
+import net.minecraft.server.v1_16_R1.SoundCategory;
 import org.bukkit.Bukkit;
 
 public class ResourcepackModule {

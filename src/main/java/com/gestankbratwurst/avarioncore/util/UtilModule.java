@@ -9,15 +9,13 @@ import com.gestankbratwurst.avarioncore.util.common.UtilChunk;
 import com.gestankbratwurst.avarioncore.util.common.UtilItem;
 import com.gestankbratwurst.avarioncore.util.common.UtilMobs;
 import com.gestankbratwurst.avarioncore.util.common.UtilPlayer;
-import com.gestankbratwurst.avarioncore.util.holograms.impl.HologramManager;
-import com.gestankbratwurst.avarioncore.util.holograms.impl.infobar.InfoBar;
-import com.gestankbratwurst.avarioncore.util.holograms.infobars.InfoBarManager;
 import com.gestankbratwurst.avarioncore.util.items.display.ItemDisplayCompiler;
-import com.gestankbratwurst.avarioncore.util.packets.adapter.ChunkTracker;
-import com.gestankbratwurst.avarioncore.util.packets.adapter.EntityTracker;
 import lombok.Getter;
 import net.crytec.inventoryapi.anvil.AnvilAPI;
 import net.crytec.libs.protocol.ProtocolAPI;
+import net.crytec.libs.protocol.holograms.impl.HologramManager;
+import net.crytec.libs.protocol.holograms.impl.infobar.InfoBar;
+import net.crytec.libs.protocol.holograms.infobars.InfoBarManager;
 import net.crytec.libs.protocol.npc.NpcAPI;
 import net.crytec.libs.protocol.skinclient.PlayerSkinManager;
 import net.crytec.libs.protocol.tablist.TabListManager;
@@ -42,9 +40,6 @@ public class UtilModule {
   public void enable(final AvarionCore plugin) {
     BukkitTime.start(plugin);
     NameSpaceFactory.init(plugin);
-    ChunkTracker.init(plugin, plugin.getProtocolManager());
-    EntityTracker.init(plugin, plugin.getProtocolManager());
-    UtilChunk.init(plugin);
     UtilPlayer.init(plugin);
     UtilBlock.init(plugin);
     UtilMobs.init(plugin);

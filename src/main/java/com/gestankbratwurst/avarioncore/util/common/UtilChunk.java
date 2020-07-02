@@ -1,25 +1,14 @@
 package com.gestankbratwurst.avarioncore.util.common;
 
-import com.gestankbratwurst.avarioncore.util.events.PlayerChangeChunkEvent;
-import com.gestankbratwurst.avarioncore.util.events.PlayerReceiveChunkEvent;
-import com.gestankbratwurst.avarioncore.util.events.PlayerUnloadsChunkEvent;
+
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import java.util.Set;
-import org.bukkit.Bukkit;
+import net.crytec.libs.protocol.tracking.ChunkTracker;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /*******************************************************
  * Copyright (C) Gestankbratwurst suotokka@gmail.com
@@ -30,56 +19,11 @@ import org.bukkit.plugin.java.JavaPlugin;
  * permission of the owner.
  *
  */
-public class UtilChunk implements Listener {
-
-  private static UtilChunk instance;
-  private static boolean initialized = false;
-  private static final Object2ObjectOpenHashMap<Player, Set<Long>> CHUNK_VIEWS = new Object2ObjectOpenHashMap<Player, Set<Long>>();
-
-  public static void init(JavaPlugin host) {
-    Preconditions.checkArgument(!initialized, "UtilChunk is already initialized!");
-    instance = new UtilChunk();
-    Bukkit.getPluginManager().registerEvents(instance, host);
-    Bukkit.getOnlinePlayers()
-        .forEach(player -> CHUNK_VIEWS.put(player, Sets.newHashSet())); // Handle reloads
-    initialized = true;
-  }
-
-  private UtilChunk() {
-  }
-
-  @EventHandler
-  public void onChunkReceive(PlayerReceiveChunkEvent event) {
-    CHUNK_VIEWS.get(event.getPlayer()).add(event.getChunkKey());
-  }
-
-  @EventHandler
-  public void onChunkReceive(PlayerUnloadsChunkEvent event) {
-    CHUNK_VIEWS.get(event.getPlayer()).remove(event.getChunkKey());
-  }
-
-  @EventHandler(priority = EventPriority.LOW)
-  public void onJoin(PlayerJoinEvent event) {
-    CHUNK_VIEWS.put(event.getPlayer(), Sets.newHashSet());
-  }
-
-  @EventHandler
-  public void onQuit(PlayerQuitEvent event) {
-    CHUNK_VIEWS.remove(event.getPlayer());
-  }
-
-  @EventHandler
-  public void onMove(PlayerMoveEvent event) {
-    Location from = event.getFrom();
-    Location to = event.getTo();
-    if (getChunkKey(from) != getChunkKey(to)) {
-      new PlayerChangeChunkEvent(event.getPlayer(), from.getChunk(), to.getChunk()).callEvent();
-    }
-  }
+public class UtilChunk {
 
   public static int[] getChunkCoords(long chunkKey) {
-    int x = ((int) chunkKey) >> 32;
-    int z = (int) (chunkKey >> 32) >> 32;
+    int x = ((int) chunkKey);
+    int z = (int) (chunkKey >> 32);
     return new int[]{x, z};
   }
 
@@ -111,11 +55,11 @@ public class UtilChunk implements Listener {
   }
 
   public static Set<Long> getChunkViews(Player player) {
-    return CHUNK_VIEWS.get(player);
+    return ChunkTracker.getChunkViews(player);
   }
 
   public static boolean isChunkInView(Player player, Chunk chunk) {
-    return CHUNK_VIEWS.get(player).contains(getChunkKey(chunk));
+    return ChunkTracker.getChunkViews(player).contains(chunk.getChunkKey());
   }
 
 }

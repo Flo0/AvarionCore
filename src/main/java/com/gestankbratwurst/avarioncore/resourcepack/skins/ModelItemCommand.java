@@ -9,7 +9,7 @@ import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.annotation.Values;
 import com.gestankbratwurst.avarioncore.resourcepack.sounds.CustomSound;
 import com.gestankbratwurst.avarioncore.util.Msg;
-import net.minecraft.server.v1_15_R1.SoundCategory;
+import net.minecraft.server.v1_16_R1.SoundCategory;
 import org.bukkit.entity.Player;
 
 /*******************************************************
