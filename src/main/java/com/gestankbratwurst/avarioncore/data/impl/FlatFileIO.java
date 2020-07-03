@@ -2,7 +2,6 @@ package com.gestankbratwurst.avarioncore.data.impl;
 
 import com.gestankbratwurst.avarioncore.AvarionCore;
 import com.gestankbratwurst.avarioncore.data.AvarionIO;
-import com.gestankbratwurst.avarioncore.data.AvarionPlayer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -25,18 +24,18 @@ import org.jetbrains.annotations.Nullable;
  */
 public class FlatFileIO implements AvarionIO {
 
-  public FlatFileIO(AvarionCore plugin) {
-    File mainFolder = plugin.getDataFolder();
+  public FlatFileIO(final AvarionCore plugin) {
+    final File mainFolder = plugin.getDataFolder();
     if (!mainFolder.exists()) {
       mainFolder.mkdirs();
     }
-    playerFolder = new File(mainFolder + File.separator + "playerdata");
-    if (!playerFolder.exists()) {
-      playerFolder.mkdirs();
+    this.playerFolder = new File(mainFolder + File.separator + "playerdata");
+    if (!this.playerFolder.exists()) {
+      this.playerFolder.mkdirs();
     }
-    worldFolder = new File(mainFolder + File.separator + "protectiondata");
-    if (!worldFolder.exists()) {
-      worldFolder.mkdirs();
+    this.worldFolder = new File(mainFolder + File.separator + "protectiondata");
+    if (!this.worldFolder.exists()) {
+      this.worldFolder.mkdirs();
     }
   }
 
@@ -45,22 +44,22 @@ public class FlatFileIO implements AvarionIO {
   private final Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
   @NotNull
-  private Path getPlayerPath(UUID playerID) {
-    return new File(playerFolder, playerID.toString() + ".json").toPath();
+  private Path getPlayerPath(final UUID playerID) {
+    return new File(this.playerFolder, playerID.toString() + ".json").toPath();
   }
 
   @NotNull
-  private Path getWorldPath(UUID worldID) {
-    return new File(worldFolder, worldID.toString() + ".json").toPath();
+  private Path getWorldPath(final UUID worldID) {
+    return new File(this.worldFolder, worldID.toString() + ".json").toPath();
   }
 
   @Override
-  public JsonObject loadPlayerData(@NotNull UUID playerID) {
-    Path playerPath = getPlayerPath(playerID);
+  public JsonObject loadPlayerData(@NotNull final UUID playerID) {
+    final Path playerPath = this.getPlayerPath(playerID);
     if (Files.exists(playerPath)) {
       try {
-        return gson.fromJson(Files.readString(playerPath), JsonObject.class);
-      } catch (IOException e) {
+        return this.gson.fromJson(Files.readString(playerPath), JsonObject.class);
+      } catch (final IOException e) {
         e.printStackTrace();
       }
     }
@@ -69,21 +68,21 @@ public class FlatFileIO implements AvarionIO {
   }
 
   @Override
-  public void savePlayerData(@NotNull UUID playerID, @NotNull JsonObject jsonData) {
+  public void savePlayerData(@NotNull final UUID playerID, @NotNull final JsonObject jsonData) {
     try {
-      Files.writeString(getPlayerPath(playerID), gson.toJson(jsonData));
-    } catch (IOException e) {
+      Files.writeString(this.getPlayerPath(playerID), this.gson.toJson(jsonData));
+    } catch (final IOException e) {
       e.printStackTrace();
     }
   }
 
   @Override
-  public @Nullable JsonObject loadWorldData(UUID worldID) {
-    Path worldPath = getWorldPath(worldID);
+  public @Nullable JsonObject loadWorldData(final UUID worldID) {
+    final Path worldPath = this.getWorldPath(worldID);
     if (Files.exists(worldPath)) {
       try {
-        return gson.fromJson(Files.readString(worldPath), JsonObject.class);
-      } catch (IOException e) {
+        return this.gson.fromJson(Files.readString(worldPath), JsonObject.class);
+      } catch (final IOException e) {
         e.printStackTrace();
       }
     }
@@ -92,10 +91,10 @@ public class FlatFileIO implements AvarionIO {
   }
 
   @Override
-  public void saveWorldData(UUID worldID, JsonObject jsonData) {
+  public void saveWorldData(final UUID worldID, final JsonObject jsonData) {
     try {
-      Files.writeString(getWorldPath(worldID), gson.toJson(jsonData));
-    } catch (IOException e) {
+      Files.writeString(this.getWorldPath(worldID), this.gson.toJson(jsonData));
+    } catch (final IOException e) {
       e.printStackTrace();
     }
   }

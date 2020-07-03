@@ -30,7 +30,7 @@ public class EconomyCommand extends BaseCommand {
 
   @Subcommand("drop")
   @CommandPermission("admin")
-  public void onSpawn(Player player, double amount, boolean name) {
+  public void onDrop(Player player, double amount) {
     RayTraceResult rayTraceResult = player.rayTraceBlocks(12);
     if (rayTraceResult == null || rayTraceResult.getHitBlock() == null) {
       Msg.error(player, "Geld", "Du musst auf einen Block in der Näche schauen.");
@@ -41,7 +41,14 @@ public class EconomyCommand extends BaseCommand {
     Location dropLoc = new Location(relative.getWorld(), relative.getX() + 0.5, relative.getY() + 0.5, relative.getZ() + 0.5);
     Item item = moneyItemHandler.dropMoneyItem(dropLoc, amount);
     item.setCustomName("§a" + amount + EconomyAccount.MONEY_PLURAL);
-    item.setCustomNameVisible(name);
+    item.setCustomNameVisible(true);
+  }
+
+  @Subcommand("icon")
+  @CommandPermission("admin")
+  public void onIcon(Player player, double amount) {
+    player.getInventory().addItem(moneyItemHandler.getIcon(amount));
+    Msg.send(player, "Geld", "Geld icon erhalten.");
   }
 
 }

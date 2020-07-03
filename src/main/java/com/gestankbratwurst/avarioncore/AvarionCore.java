@@ -5,7 +5,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.gestankbratwurst.avarioncore.data.AvarionDataManager;
 import com.gestankbratwurst.avarioncore.data.AvarionIO;
-import com.gestankbratwurst.avarioncore.data.impl.FlatFileIO;
+import com.gestankbratwurst.avarioncore.data.impl.MongoIO;
 import com.gestankbratwurst.avarioncore.economy.EconomyCommand;
 import com.gestankbratwurst.avarioncore.economy.MoneyItemHandler;
 import com.gestankbratwurst.avarioncore.friends.FriendCommand;
@@ -60,46 +60,46 @@ public final class AvarionCore extends JavaPlugin {
     new InventoryAPI(this);
     Msg.init(this);
 
-    this.avarionIO = new FlatFileIO(this);
+    this.avarionIO = new MongoIO();
     this.commandManager = new PaperCommandManager(this);
     this.taskManager = new TaskManager(this);
     this.protocolManager = ProtocolLibrary.getProtocolManager();
 
     this.utilModule = new UtilModule();
-    utilModule.enable(this);
+    this.utilModule.enable(this);
 
     this.resourcepackModule = new ResourcepackModule();
-    resourcepackModule.enable(this);
+    this.resourcepackModule.enable(this);
 
     this.avarionDataManager = new AvarionDataManager(this);
     this.protectionManager = new ProtectionManager(this);
 
     this.moneyItemHandler = new MoneyItemHandler(this);
 
-    registerCommands();
+    this.registerCommands();
   }
 
   private void registerCommands() {
-    commandManager.getCommandCompletions().registerStaticCompletion("ProtectionRule", Arrays
+    this.commandManager.getCommandCompletions().registerStaticCompletion("ProtectionRule", Arrays
         .stream(ProtectionRule.values())
         .map(Enum::toString)
         .collect(Collectors.toList()));
 
-    commandManager.getCommandCompletions().registerStaticCompletion("RuleState", Arrays
+    this.commandManager.getCommandCompletions().registerStaticCompletion("RuleState", Arrays
         .stream(RuleState.values())
         .map(Enum::toString)
         .collect(Collectors.toList()));
 
-    commandManager.registerCommand(new ProtectionCommand(protectionManager));
-    commandManager.registerCommand(new FriendCommand(this));
-    commandManager.registerCommand(new EconomyCommand(this.moneyItemHandler));
+    this.commandManager.registerCommand(new ProtectionCommand(this.protectionManager));
+    this.commandManager.registerCommand(new FriendCommand(this));
+    this.commandManager.registerCommand(new EconomyCommand(this.moneyItemHandler));
   }
 
   @Override
   public void onDisable() {
-    resourcepackModule.disable(this);
-    protectionManager.flushData();
-    avarionDataManager.flushData();
+    this.resourcepackModule.disable(this);
+    this.protectionManager.flushData();
+    this.avarionDataManager.flushData();
     UtilBlock.terminate(this);
   }
 
