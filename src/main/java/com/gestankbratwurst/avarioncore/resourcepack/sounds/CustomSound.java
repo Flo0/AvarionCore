@@ -19,8 +19,7 @@ import org.bukkit.entity.Player;
  */
 public enum CustomSound {
 
-  COINS_SOUND(),
-  RECIPE_INFO();
+  COINS_SOUND();
 
   private MinecraftKey key = null;
 

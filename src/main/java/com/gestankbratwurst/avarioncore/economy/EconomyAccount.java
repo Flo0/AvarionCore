@@ -14,6 +14,9 @@ import lombok.Getter;
  */
 public class EconomyAccount {
 
+  public static String MONEY_SINGULAR = "$";
+  public static String MONEY_PLURAL = "$";
+
   public EconomyAccount(JsonObject jsonObject) {
     this.balance = jsonObject.get("Balance").getAsDouble();
     this.bankBalance = jsonObject.get("BankBalance").getAsDouble();

@@ -6,6 +6,8 @@ import com.comphenix.protocol.ProtocolManager;
 import com.gestankbratwurst.avarioncore.data.AvarionDataManager;
 import com.gestankbratwurst.avarioncore.data.AvarionIO;
 import com.gestankbratwurst.avarioncore.data.impl.FlatFileIO;
+import com.gestankbratwurst.avarioncore.economy.EconomyCommand;
+import com.gestankbratwurst.avarioncore.economy.MoneyItemHandler;
 import com.gestankbratwurst.avarioncore.friends.FriendCommand;
 import com.gestankbratwurst.avarioncore.protection.ProtectionCommand;
 import com.gestankbratwurst.avarioncore.protection.ProtectionManager;
@@ -48,6 +50,8 @@ public final class AvarionCore extends JavaPlugin {
   private AvarionDataManager avarionDataManager;
   @Getter
   private ProtectionManager protectionManager;
+  @Getter
+  private MoneyItemHandler moneyItemHandler;
 
   @Override
   public void onEnable() {
@@ -70,6 +74,8 @@ public final class AvarionCore extends JavaPlugin {
     this.avarionDataManager = new AvarionDataManager(this);
     this.protectionManager = new ProtectionManager(this);
 
+    this.moneyItemHandler = new MoneyItemHandler(this);
+
     registerCommands();
   }
 
@@ -86,6 +92,7 @@ public final class AvarionCore extends JavaPlugin {
 
     commandManager.registerCommand(new ProtectionCommand(protectionManager));
     commandManager.registerCommand(new FriendCommand(this));
+    commandManager.registerCommand(new EconomyCommand(this.moneyItemHandler));
   }
 
   @Override

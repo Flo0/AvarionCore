@@ -19,7 +19,7 @@ public class ResourcepackManager {
 
   // "176.9.38.108"
   private final int port = 9555;
-  private final String host = "176.9.38.108";
+  private final String host = "localhost";
   private final String hash;
 
   private ResourcepackServer server;
