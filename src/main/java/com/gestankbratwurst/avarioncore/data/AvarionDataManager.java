@@ -58,7 +58,8 @@ public class AvarionDataManager implements Listener, AsyncCacheLoader<UUID, Avar
   }
 
   public void flushData() {
-    this.offlinePlayerCache.synchronous().asMap().values().forEach(this.avarionIO::savePlayer);
+    System.out.println("Cached: " + this.offlinePlayerCache.synchronous().estimatedSize());
+    this.offlinePlayerCache.synchronous().asMap().values().forEach(this.avarionIO::savePlayerAsync);
   }
 
   @Nullable

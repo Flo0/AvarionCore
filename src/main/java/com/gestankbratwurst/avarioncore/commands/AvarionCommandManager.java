@@ -98,7 +98,6 @@ public class AvarionCommandManager {
     this.commandManager.registerCommand(new FriendCommand(this.avarionCore));
     this.commandManager.registerCommand(new EconomyCommand(this.avarionCore.getMoneyItemHandler()));
     this.commandManager.registerCommand(new ModelItemCommand());
-
   }
 
 }
