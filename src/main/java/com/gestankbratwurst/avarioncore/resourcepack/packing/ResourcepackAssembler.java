@@ -376,8 +376,10 @@ public class ResourcepackAssembler {
     System.out.println("§a -> -> -> load cModels");
     for (final File cModelFileFolder : customTempModelFolder.listFiles()) {
       for (final File cModelFile : cModelFileFolder.listFiles()) {
+        System.out.println("§a -> -> -> -> loading: " + cModelFile.getName().replace(".json", ""));
         Model.valueOf(cModelFile.getName().replace(".json", ""));
         FileUtils.copyFile(cModelFile, new File(customModelFolder, cModelFile.getName().toLowerCase()));
+        System.out.println("§a -> -> -> -> done   : " + cModelFile.getName().replace(".json", ""));
       }
     }
 
