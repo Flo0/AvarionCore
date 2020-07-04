@@ -1,18 +1,13 @@
 package com.gestankbratwurst.avarioncore;
 
-import co.aikar.commands.PaperCommandManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.gestankbratwurst.avarioncore.commands.AvarionCommandManager;
 import com.gestankbratwurst.avarioncore.data.AvarionDataManager;
 import com.gestankbratwurst.avarioncore.data.AvarionIO;
 import com.gestankbratwurst.avarioncore.data.impl.MongoIO;
-import com.gestankbratwurst.avarioncore.economy.EconomyCommand;
 import com.gestankbratwurst.avarioncore.economy.MoneyItemHandler;
-import com.gestankbratwurst.avarioncore.friends.FriendCommand;
-import com.gestankbratwurst.avarioncore.protection.ProtectionCommand;
 import com.gestankbratwurst.avarioncore.protection.ProtectionManager;
-import com.gestankbratwurst.avarioncore.protection.ProtectionRule;
-import com.gestankbratwurst.avarioncore.protection.RuleState;
 import com.gestankbratwurst.avarioncore.resourcepack.ResourcepackModule;
 import com.gestankbratwurst.avarioncore.tasks.TaskManager;
 import com.gestankbratwurst.avarioncore.util.Msg;
@@ -20,8 +15,6 @@ import com.gestankbratwurst.avarioncore.util.UtilModule;
 import com.gestankbratwurst.avarioncore.util.common.UtilBlock;
 import com.gestankbratwurst.avarioncore.util.items.display.ItemDisplayCompiler;
 import com.gestankbratwurst.avarioncore.web.WebManager;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import net.crytec.inventoryapi.InventoryAPI;
@@ -40,8 +33,6 @@ public final class AvarionCore extends JavaPlugin {
   @Setter
   private ItemDisplayCompiler displayCompiler;
   @Getter
-  private PaperCommandManager commandManager;
-  @Getter
   private UtilModule utilModule;
   @Getter
   private ResourcepackModule resourcepackModule;
@@ -55,6 +46,8 @@ public final class AvarionCore extends JavaPlugin {
   private MoneyItemHandler moneyItemHandler;
   @Getter
   private WebManager webManager;
+  @Getter
+  private AvarionCommandManager commandManager;
 
   @Override
   public void onEnable() {
@@ -64,7 +57,6 @@ public final class AvarionCore extends JavaPlugin {
     Msg.init(this);
 
     this.avarionIO = new MongoIO();
-    this.commandManager = new PaperCommandManager(this);
     this.taskManager = new TaskManager(this);
     this.protocolManager = ProtocolLibrary.getProtocolManager();
 
@@ -78,27 +70,16 @@ public final class AvarionCore extends JavaPlugin {
     this.protectionManager = new ProtectionManager(this);
 
     this.moneyItemHandler = new MoneyItemHandler(this);
-    
+
     this.webManager = new WebManager(this);
 
-    this.registerCommands();
+    this.commandManager = new AvarionCommandManager(this);
+
+    this.commandManager.registerCompletions();
+    this.commandManager.registerContextResolver();
+    this.commandManager.registerCommands();
   }
 
-  private void registerCommands() {
-    this.commandManager.getCommandCompletions().registerStaticCompletion("ProtectionRule", Arrays
-        .stream(ProtectionRule.values())
-        .map(Enum::toString)
-        .collect(Collectors.toList()));
-
-    this.commandManager.getCommandCompletions().registerStaticCompletion("RuleState", Arrays
-        .stream(RuleState.values())
-        .map(Enum::toString)
-        .collect(Collectors.toList()));
-
-    this.commandManager.registerCommand(new ProtectionCommand(this.protectionManager));
-    this.commandManager.registerCommand(new FriendCommand(this));
-    this.commandManager.registerCommand(new EconomyCommand(this.moneyItemHandler));
-  }
 
   @Override
   public void onDisable() {

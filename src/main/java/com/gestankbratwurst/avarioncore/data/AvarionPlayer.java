@@ -4,16 +4,20 @@ import com.gestankbratwurst.avarioncore.economy.EconomyAccount;
 import com.gestankbratwurst.avarioncore.friends.FriendAccount;
 import com.gestankbratwurst.avarioncore.friends.FriendsMainGUI;
 import com.gestankbratwurst.avarioncore.util.Msg;
+import com.gestankbratwurst.avarioncore.util.common.UtilItem;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 /*******************************************************
@@ -33,17 +37,22 @@ public class AvarionPlayer {
     this.economyAccount = new EconomyAccount();
     this.friendAccount = new FriendAccount(this);
     this.messages = new ArrayList<>();
+    this.itemQueue = new ArrayDeque<>();
   }
 
   public AvarionPlayer(final JsonObject jsonObject) {
     this.playerID = UUID.fromString(jsonObject.get("PlayerID").getAsString());
     this.lastInstanceTime = System.currentTimeMillis();
+    this.itemQueue = new ArrayDeque<>();
     this.economyAccount = new EconomyAccount(jsonObject.get("EconomyAccount").getAsJsonObject());
     this.friendAccount = new FriendAccount(jsonObject.get("FriendAccount").getAsJsonObject(), this);
+    this.lastSeenName = jsonObject.get("LastSeenName").getAsString();
     this.messages = new ArrayList<>();
     for (final JsonElement element : jsonObject.get("Messages").getAsJsonArray()) {
       this.messages.add(new Msg.Pack(element.getAsJsonObject()));
     }
+    final ItemStack[] items = UtilItem.deserialize(jsonObject.get("ItemQueue").getAsString());
+    this.itemQueue.addAll(Arrays.asList(items));
   }
 
   @Getter
@@ -54,17 +63,49 @@ public class AvarionPlayer {
   private final EconomyAccount economyAccount;
   @Getter
   private final FriendAccount friendAccount;
+  @Getter
+  private String lastSeenName = "NONE";
   private final List<Msg.Pack> messages;
+  private final ArrayDeque<ItemStack> itemQueue;
+
 
   public void openFriendGUI() {
     FriendsMainGUI.open(this);
   }
 
+  private void queueItem(final ItemStack item) {
+    item.add();
+  }
+
+  public void giveItem(final ItemStack item, final boolean dropOnFull) {
+    final Player player = this.getPlayer();
+    if (player != null) {
+      player.getInventory().addItem(item).values().forEach(left -> {
+        if (dropOnFull) {
+          player.getWorld().dropItemNaturally(player.getLocation(), left);
+        } else {
+          this.queueItem(left);
+        }
+      });
+    } else {
+      this.queueItem(item);
+    }
+  }
+
   public void onLogin(final PlayerLoginEvent event) {
+    final Player player = event.getPlayer();
     for (final Msg.Pack msgPack : this.messages) {
-      Msg.send(event.getPlayer(), msgPack.getModuleName(), msgPack.getMessage());
+      Msg.send(player, msgPack.getModuleName(), msgPack.getMessage());
     }
     this.messages.clear();
+    this.lastSeenName = player.getName();
+    if (!this.itemQueue.isEmpty()) {
+      final int amount = this.itemQueue.size();
+      this.sendMessage("Items", "Du hast " + Msg.elem("" + amount) + " neue Items erhalten.");
+      while (!this.itemQueue.isEmpty()) {
+        this.giveItem(this.itemQueue.poll(), true);
+      }
+    }
   }
 
   @Nullable
@@ -91,6 +132,8 @@ public class AvarionPlayer {
     json.addProperty("LastInstanceTime", this.lastInstanceTime);
     json.add("EconomyAccount", this.economyAccount.getAsJson());
     json.add("FriendAccount", this.friendAccount.getAsJson());
+    json.addProperty("LastSeenName", this.lastSeenName);
+    json.addProperty("ItemQueue", UtilItem.serialize(this.itemQueue.toArray(new ItemStack[0])));
 
     final JsonArray messageArray = new JsonArray();
 

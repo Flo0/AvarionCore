@@ -35,12 +35,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AvarionDataManager implements Listener, AsyncCacheLoader<UUID, AvarionPlayer>, RemovalListener<UUID, AvarionPlayer> {
 
-  public AvarionDataManager(AvarionCore avarionCore) {
+  public AvarionDataManager(final AvarionCore avarionCore) {
     Bukkit.getPluginManager().registerEvents(this, avarionCore);
     this.avarionIO = avarionCore.getAvarionIO();
     this.onlinePlayerMap = new Object2ObjectOpenHashMap<>();
     this.offlinePlayerCache = Caffeine.newBuilder()
-        .expireAfterAccess(30, TimeUnit.MINUTES)
+        .expireAfterAccess(60, TimeUnit.MINUTES)
         .removalListener(this)
         .buildAsync(this);
   }
@@ -50,51 +50,51 @@ public class AvarionDataManager implements Listener, AsyncCacheLoader<UUID, Avar
   private final AsyncLoadingCache<UUID, AvarionPlayer> offlinePlayerCache;
 
   public long getCacheOverhead() {
-    return offlinePlayerCache.synchronous().estimatedSize() - onlinePlayerMap.size();
+    return this.offlinePlayerCache.synchronous().estimatedSize() - this.onlinePlayerMap.size();
   }
 
   public CacheStats getOfflinePlayerCacheStats() {
-    return offlinePlayerCache.synchronous().stats();
+    return this.offlinePlayerCache.synchronous().stats();
   }
 
   public void flushData() {
-    offlinePlayerCache.synchronous().asMap().values().forEach(avarionIO::savePlayer);
+    this.offlinePlayerCache.synchronous().asMap().values().forEach(this.avarionIO::savePlayer);
   }
 
   @Nullable
-  public AvarionPlayer getOnlineData(UUID playerID) {
-    return onlinePlayerMap.get(playerID);
+  public AvarionPlayer getOnlineData(final UUID playerID) {
+    return this.onlinePlayerMap.get(playerID);
   }
 
   @NotNull
-  public CompletableFuture<AvarionPlayer> getData(UUID playerID) {
-    return offlinePlayerCache.get(playerID);
+  public CompletableFuture<AvarionPlayer> getData(final UUID playerID) {
+    return this.offlinePlayerCache.get(playerID);
   }
 
   @Override
   @NotNull
-  public CompletableFuture<AvarionPlayer> asyncLoad(@NotNull UUID key, @NotNull Executor executor) {
-    if (onlinePlayerMap.containsKey(key)) {
-      return CompletableFuture.supplyAsync(() -> onlinePlayerMap.get(key), executor);
+  public CompletableFuture<AvarionPlayer> asyncLoad(@NotNull final UUID key, @NotNull final Executor executor) {
+    if (this.onlinePlayerMap.containsKey(key)) {
+      return CompletableFuture.supplyAsync(() -> this.onlinePlayerMap.get(key), executor);
     }
-    return avarionIO.loadPlayerAsync(key, executor);
+    return this.avarionIO.loadPlayerAsync(key, executor);
   }
 
   @Override
-  public void onRemoval(@Nullable UUID key, @Nullable AvarionPlayer value, @NotNull RemovalCause cause) {
+  public void onRemoval(@Nullable final UUID key, @Nullable final AvarionPlayer value, @NotNull final RemovalCause cause) {
     if (key != null && value != null) {
-      avarionIO.savePlayerAsync(value);
+      this.avarionIO.savePlayerAsync(value);
     }
   }
 
   @EventHandler
-  public void preLogin(AsyncPlayerPreLoginEvent event) {
-    UUID playerID = event.getUniqueId();
+  public void preLogin(final AsyncPlayerPreLoginEvent event) {
+    final UUID playerID = event.getUniqueId();
 
     try {
-      AvarionPlayer avPlayer = offlinePlayerCache.get(playerID).get();
-      onlinePlayerMap.put(playerID, avPlayer);
-    } catch (InterruptedException | ExecutionException e) {
+      final AvarionPlayer avPlayer = this.offlinePlayerCache.get(playerID).get();
+      this.onlinePlayerMap.put(playerID, avPlayer);
+    } catch (final InterruptedException | ExecutionException e) {
       Bukkit.getLogger().severe("Error while player was logging in.");
       e.printStackTrace();
       event.setKickMessage("§cError: §fSpielerdaten konnten nicht geladen werden.");
@@ -106,15 +106,15 @@ public class AvarionDataManager implements Listener, AsyncCacheLoader<UUID, Avar
   }
 
   @EventHandler
-  public void onLogin(PlayerLoginEvent event) {
-    onlinePlayerMap.get(event.getPlayer().getUniqueId()).onLogin(event);
+  public void onLogin(final PlayerLoginEvent event) {
+    this.onlinePlayerMap.get(event.getPlayer().getUniqueId()).onLogin(event);
   }
 
   @EventHandler
-  public void onQuit(PlayerQuitEvent event) {
-    UUID playerID = event.getPlayer().getUniqueId();
-    offlinePlayerCache.get(playerID);
-    onlinePlayerMap.remove(playerID);
+  public void onQuit(final PlayerQuitEvent event) {
+    final UUID playerID = event.getPlayer().getUniqueId();
+    this.offlinePlayerCache.get(playerID);
+    this.avarionIO.savePlayerAsync(this.onlinePlayerMap.remove(playerID));
   }
 
 }

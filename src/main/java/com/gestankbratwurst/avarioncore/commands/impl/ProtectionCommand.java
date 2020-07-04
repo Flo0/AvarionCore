@@ -1,4 +1,4 @@
-package com.gestankbratwurst.avarioncore.protection;
+package com.gestankbratwurst.avarioncore.commands.impl;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
@@ -6,11 +6,15 @@ import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.annotation.Values;
+import com.gestankbratwurst.avarioncore.protection.ProtectedRegion;
+import com.gestankbratwurst.avarioncore.protection.ProtectionManager;
+import com.gestankbratwurst.avarioncore.protection.ProtectionRule;
+import com.gestankbratwurst.avarioncore.protection.RuleState;
+import com.gestankbratwurst.avarioncore.protection.WorldDomain;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -34,8 +38,9 @@ public class ProtectionCommand extends BaseCommand {
 
   @Subcommand("worldrule")
   @CommandCompletion("@ProtectionRule @RuleState")
-  public void onWorldRule(Player player, @Values("@ProtectionRule") ProtectionRule rule, @Values("@RuleState") RuleState state) {
-    WorldDomain worldDomain = protectionManager.getWorldDomain(player.getWorld().getUID());
+  public void onWorldRule(final Player player, @Values("@ProtectionRule") final ProtectionRule rule,
+      @Values("@RuleState") final RuleState state) {
+    final WorldDomain worldDomain = this.protectionManager.getWorldDomain(player.getWorld().getUID());
     if (!rule.isGlobalContext()) {
       worldDomain.setWorldPlayerRule(rule, state);
     } else {
@@ -45,47 +50,47 @@ public class ProtectionCommand extends BaseCommand {
   }
 
   @Subcommand("pos1")
-  public void onPosOne(Player player) {
-    if (POS_.containsKey(player.getUniqueId())) {
-      POS_.get(player.getUniqueId())[0] = player.getLocation();
+  public void onPosOne(final Player player) {
+    if (this.POS_.containsKey(player.getUniqueId())) {
+      this.POS_.get(player.getUniqueId())[0] = player.getLocation();
     } else {
-      POS_.put(player.getUniqueId(), new Location[]{player.getLocation(), null});
+      this.POS_.put(player.getUniqueId(), new Location[]{player.getLocation(), null});
     }
     player.sendMessage("POS 1");
   }
 
   @Subcommand("pos2")
-  public void onPosTwo(Player player) {
-    if (POS_.containsKey(player.getUniqueId())) {
-      POS_.get(player.getUniqueId())[1] = player.getLocation();
+  public void onPosTwo(final Player player) {
+    if (this.POS_.containsKey(player.getUniqueId())) {
+      this.POS_.get(player.getUniqueId())[1] = player.getLocation();
     } else {
-      POS_.put(player.getUniqueId(), new Location[]{null, player.getLocation()});
+      this.POS_.put(player.getUniqueId(), new Location[]{null, player.getLocation()});
     }
     player.sendMessage("POS 2");
   }
 
   @Subcommand("create")
-  public void onCreate(Player player, int prio, String name) {
-    if (!POS_.containsKey(player.getUniqueId())) {
+  public void onCreate(final Player player, final int prio, final String name) {
+    if (!this.POS_.containsKey(player.getUniqueId())) {
       player.sendMessage("Pos setzen...");
       return;
     }
-    Location[] locations = POS_.get(player.getUniqueId());
+    final Location[] locations = this.POS_.get(player.getUniqueId());
     if (locations[0] == null || locations[1] == null) {
       player.sendMessage("Pos setzen...");
       return;
     }
 
-    protectionManager.createRegion(locations[0], locations[1], player.getUniqueId(), prio).setRegionName(name);
+    this.protectionManager.createRegion(locations[0], locations[1], player.getUniqueId(), prio).setRegionName(name);
 
     player.sendMessage("Region created.");
   }
 
   @Subcommand("info")
-  public void onInfo(Player player) {
-    Block block = player.getLocation().getBlock();
+  public void onInfo(final Player player) {
+    final Block block = player.getLocation().getBlock();
 
-    ProtectedRegion region = protectionManager.getHighestPriorityRegionAt(block);
+    final ProtectedRegion region = this.protectionManager.getHighestPriorityRegionAt(block);
 
     if (region == null) {
       player.sendMessage("No region here.");

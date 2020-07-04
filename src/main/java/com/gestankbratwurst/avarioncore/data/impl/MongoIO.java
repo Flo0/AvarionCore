@@ -1,5 +1,7 @@
 package com.gestankbratwurst.avarioncore.data.impl;
 
+import co.aikar.commands.CommandCompletionContext;
+import co.aikar.commands.CommandIssuer;
 import com.gestankbratwurst.avarioncore.data.AvarionIO;
 import com.gestankbratwurst.avarioncore.data.AvarionPlayer;
 import com.google.gson.Gson;
@@ -12,7 +14,12 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.bson.Document;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,13 +43,16 @@ public class MongoIO implements AvarionIO {
     this.playerCollection = database.getCollection("players");
     this.worldCollection = database.getCollection("worlds");
     this.playerCollection.createIndex(Indexes.hashed("PlayerID"));
+    this.playerCollection.createIndex(Indexes.hashed("LastSeenName"));
     this.worldCollection.createIndex(Indexes.hashed("WorldID"));
     this.gson = new GsonBuilder().disableHtmlEscaping().create();
+    this.playerNameCache = new HashSet<>();
   }
 
   private final Gson gson;
   private final MongoCollection<Document> playerCollection;
   private final MongoCollection<Document> worldCollection;
+  private final Set<String> playerNameCache;
 
   @Override
   public @Nullable JsonObject loadPlayerData(final UUID playerID) {
@@ -76,5 +86,24 @@ public class MongoIO implements AvarionIO {
       this.worldCollection.findOneAndReplace(new Document("WorldID", worldID.toString()), Document.parse(this.gson.toJson(jsonData)));
     }
   }
+
+  @Override
+  public <I extends CommandIssuer> List<String> getAvarionPlayerNames(final CommandCompletionContext<I> commandCompletionContext) {
+
+    final String input = commandCompletionContext.getInput();
+
+    if (input.equals("")) {
+      final Document filter = new Document();
+      filter.put("_id", 0);
+      filter.put("LastSeenName", 1);
+      for (final Document document : this.playerCollection.find().projection(filter)) {
+        this.playerNameCache.add(document.getString("LastSeenName"));
+      }
+      return new ArrayList<>(this.playerNameCache);
+    }
+
+    return this.playerNameCache.stream().filter(name -> name.startsWith(input)).collect(Collectors.toList());
+  }
+
 
 }

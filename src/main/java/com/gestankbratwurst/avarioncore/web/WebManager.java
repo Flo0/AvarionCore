@@ -48,7 +48,10 @@ public class WebManager {
 
         if (args[0].equals("POST") && args[1].equals("/" + this.password)) {
           System.out.println("§aHTTP shutdown initialised.");
-          Bukkit.getScheduler().runTask(this.avarionCore, Bukkit::shutdown);
+          Bukkit.getScheduler().runTask(this.avarionCore, () -> {
+            Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer("Der Server wurde auf http Anfrage neu gestartet."));
+            Bukkit.shutdown();
+          });
           Bukkit.getServer().shutdown();
           outputStream.write(this.responseOk.getBytes(StandardCharsets.UTF_8));
           break;

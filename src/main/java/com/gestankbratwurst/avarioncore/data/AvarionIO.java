@@ -1,10 +1,12 @@
 package com.gestankbratwurst.avarioncore.data;
 
+import co.aikar.commands.CommandCompletionContext;
+import co.aikar.commands.CommandIssuer;
 import com.google.gson.JsonObject;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /*******************************************************
@@ -29,7 +31,7 @@ public interface AvarionIO {
   void saveWorldData(final UUID worldID, final JsonObject jsonData);
 
   default AvarionPlayer loadPlayer(final UUID playerID) {
-    JsonObject data = loadPlayerData(playerID);
+    final JsonObject data = this.loadPlayerData(playerID);
     if (data == null) {
       return new AvarionPlayer(playerID);
     } else {
@@ -37,20 +39,22 @@ public interface AvarionIO {
     }
   }
 
+  <I extends CommandIssuer> List<String> getAvarionPlayerNames(CommandCompletionContext<I> commandCompletionContext);
+
   default void savePlayer(final AvarionPlayer avarionPlayer) {
-    savePlayerData(avarionPlayer.getPlayerID(), avarionPlayer.getAsJson());
+    this.savePlayerData(avarionPlayer.getPlayerID(), avarionPlayer.getAsJson());
   }
 
   default CompletableFuture<AvarionPlayer> loadPlayerAsync(final UUID playerID, final Executor executor) {
-    return CompletableFuture.supplyAsync(() -> loadPlayer(playerID), executor);
+    return CompletableFuture.supplyAsync(() -> this.loadPlayer(playerID), executor);
   }
 
-  default CompletableFuture<Void> savePlayerAsync(AvarionPlayer avarionPlayer, final Executor executor) {
-    return CompletableFuture.runAsync(() -> savePlayer(avarionPlayer), executor);
+  default CompletableFuture<Void> savePlayerAsync(final AvarionPlayer avarionPlayer, final Executor executor) {
+    return CompletableFuture.runAsync(() -> this.savePlayer(avarionPlayer), executor);
   }
 
-  default CompletableFuture<Void> savePlayerAsync(AvarionPlayer avarionPlayer) {
-    return CompletableFuture.runAsync(() -> savePlayer(avarionPlayer));
+  default CompletableFuture<Void> savePlayerAsync(final AvarionPlayer avarionPlayer) {
+    return CompletableFuture.runAsync(() -> this.savePlayer(avarionPlayer));
   }
 
 }

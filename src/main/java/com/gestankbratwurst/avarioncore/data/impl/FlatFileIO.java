@@ -1,5 +1,7 @@
 package com.gestankbratwurst.avarioncore.data.impl;
 
+import co.aikar.commands.CommandCompletionContext;
+import co.aikar.commands.CommandIssuer;
 import com.gestankbratwurst.avarioncore.AvarionCore;
 import com.gestankbratwurst.avarioncore.data.AvarionIO;
 import com.google.gson.Gson;
@@ -9,7 +11,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,6 +103,11 @@ public class FlatFileIO implements AvarionIO {
     } catch (final IOException e) {
       e.printStackTrace();
     }
+  }
+
+  @Override
+  public <I extends CommandIssuer> List<String> getAvarionPlayerNames(final CommandCompletionContext<I> commandCompletionContext) {
+    return Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
   }
 
 }

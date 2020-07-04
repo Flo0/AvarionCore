@@ -30,22 +30,22 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
  */
 public class UtilItem implements Listener {
 
-  public static void init(JavaPlugin plugin) {
+  public static void init(final JavaPlugin plugin) {
     Bukkit.getPluginManager().registerEvents(new UtilItem(), plugin);
   }
 
-  public static char asChar(ItemStack item) {
-    NBTItem nbt = new NBTItem(item);
+  public static char asChar(final ItemStack item) {
+    final NBTItem nbt = new NBTItem(item);
     if (nbt.hasKey("Model")) {
       return Model.valueOf(nbt.getString("Model")).getChar();
     }
     return 'X';
   }
 
-  public static String serialize(ItemStack[] items) {
+  public static String serialize(final ItemStack[] items) {
     try {
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
+      final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      final BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
 
       // Write the size of the inventory
       dataOutput.writeInt(items.length);
@@ -58,16 +58,16 @@ public class UtilItem implements Listener {
       // Serialize that array
       dataOutput.close();
       return Base64Coder.encodeLines(outputStream.toByteArray());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new IllegalStateException("Unable to save item stacks.", e);
     }
   }
 
-  public static ItemStack[] deserialize(String data) throws IOException {
+  public static ItemStack[] deserialize(final String data) {
     try {
-      ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
-      BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-      ItemStack[] items = new ItemStack[dataInput.readInt()];
+      final ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
+      final BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+      final ItemStack[] items = new ItemStack[dataInput.readInt()];
 
       // Read the serialized inventory
       for (int i = 0; i < items.length; i++) {
@@ -76,26 +76,27 @@ public class UtilItem implements Listener {
 
       dataInput.close();
       return items;
-    } catch (ClassNotFoundException e) {
-      throw new IOException("Unable to decode class type.", e);
+    } catch (final ClassNotFoundException | IOException e) {
+      e.printStackTrace();
+      return null;
     }
   }
 
-  public static boolean isEnachantable(ItemStack item) {
+  public static boolean isEnachantable(final ItemStack item) {
     if (!item.getEnchantments().isEmpty()) {
       return false;
     }
-    PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+    final PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
     return !container.has(NameSpaceFactory.provide("ENCHANTBLOCK"), PersistentDataType.INTEGER);
   }
 
-  public static boolean canReceiveAnvil(ItemStack item) {
-    PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+  public static boolean canReceiveAnvil(final ItemStack item) {
+    final PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
     return !container.has(NameSpaceFactory.provide("BLOCKANVILRECEIVER"), PersistentDataType.INTEGER);
   }
 
-  public static boolean canProvideAnvil(ItemStack item) {
-    PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+  public static boolean canProvideAnvil(final ItemStack item) {
+    final PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
     return !container.has(NameSpaceFactory.provide("BLOCKANVILPROVIDER"), PersistentDataType.INTEGER);
   }
 
@@ -104,7 +105,7 @@ public class UtilItem implements Listener {
   }
 
   @EventHandler
-  public void onEnchant(PrepareItemEnchantEvent event) {
+  public void onEnchant(final PrepareItemEnchantEvent event) {
     if (isEnachantable(event.getItem())) {
       return;
     }
@@ -112,9 +113,9 @@ public class UtilItem implements Listener {
   }
 
   @EventHandler
-  public void onAnvil(PrepareAnvilEvent event) {
-    ItemStack left = event.getInventory().getItem(0);
-    ItemStack right = event.getInventory().getItem(1);
+  public void onAnvil(final PrepareAnvilEvent event) {
+    final ItemStack left = event.getInventory().getItem(0);
+    final ItemStack right = event.getInventory().getItem(1);
     if (left == null || right == null || left.getType() == Material.AIR || right.getType() == Material.AIR) {
       return;
     }

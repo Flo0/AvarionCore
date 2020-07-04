@@ -1,4 +1,4 @@
-package com.gestankbratwurst.avarioncore.friends;
+package com.gestankbratwurst.avarioncore.commands.impl;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
@@ -23,8 +23,8 @@ public class FriendCommand extends BaseCommand {
   private final AvarionCore plugin;
 
   @Default
-  public void onDefault(Player sender) {
-    plugin.getAvarionDataManager().getOnlineData(sender.getUniqueId()).openFriendGUI();
+  public void onDefault(final Player sender) {
+    this.plugin.getAvarionDataManager().getOnlineData(sender.getUniqueId()).openFriendGUI();
   }
 
 }
