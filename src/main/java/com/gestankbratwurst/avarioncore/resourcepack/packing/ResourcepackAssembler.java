@@ -54,31 +54,31 @@ public class ResourcepackAssembler {
 
   public ResourcepackAssembler(final AvarionCore plugin) {
     this.plugin = plugin;
-    clearPluginFolder(plugin);
-    playerSkinManager = plugin.getUtilModule().getPlayerSkinManager();
-    packFolderSet = new ObjectLinkedOpenHashSet<>();
+    this.clearPluginFolder(plugin);
+    this.playerSkinManager = plugin.getUtilModule().getPlayerSkinManager();
+    this.packFolderSet = new ObjectLinkedOpenHashSet<>();
     this.gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    skinBackupFile = new File(plugin.getDataFolder(), "skindata.json");
-    skinCacheFile = new File(plugin.getDataFolder(), "skinchache.json");
+    this.skinBackupFile = new File(plugin.getDataFolder(), "skindata.json");
+    this.skinCacheFile = new File(plugin.getDataFolder(), "skinchache.json");
 
-    packFolderSet.add(packFolder = new File(plugin.getDataFolder() + File.separator + "resourcepack"));
-    packFolderSet.add(assetFolder = new File(packFolder + File.separator + "assets"));
-    packFolderSet.add(minecraftFolder = new File(assetFolder + File.separator + "minecraft"));
-    packFolderSet.add(blockStateFolder = new File(minecraftFolder + File.separator + "blockstates"));
-    packFolderSet.add(fontFolder = new File(minecraftFolder + File.separator + "font"));
-    packFolderSet.add(langFolder = new File(minecraftFolder + File.separator + "lang"));
-    packFolderSet.add(modelsFolder = new File(minecraftFolder + File.separator + "models"));
-    packFolderSet.add(itemModelFolder = new File(modelsFolder + File.separator + "item"));
-    packFolderSet.add(blockModelFolder = new File(modelsFolder + File.separator + "block"));
-    packFolderSet.add(particlesFolder = new File(minecraftFolder + File.separator + "particles"));
-    packFolderSet.add(soundsFolder = new File(minecraftFolder + File.separator + "sounds" + File.separator + "custom"));
-    packFolderSet.add(texturesFolder = new File(minecraftFolder + File.separator + "textures"));
-    mcmetaFile = new File(packFolder, "pack.mcmeta");
-    soundsFile = new File(minecraftFolder, "sounds.json");
-    File stampFolder = new File(plugin.getDataFolder() + File.separator + ResourcepackManager.SERVER_TIMESTAMP);
+    this.packFolderSet.add(this.packFolder = new File(plugin.getDataFolder() + File.separator + "resourcepack"));
+    this.packFolderSet.add(this.assetFolder = new File(this.packFolder + File.separator + "assets"));
+    this.packFolderSet.add(this.minecraftFolder = new File(this.assetFolder + File.separator + "minecraft"));
+    this.packFolderSet.add(this.blockStateFolder = new File(this.minecraftFolder + File.separator + "blockstates"));
+    this.packFolderSet.add(this.fontFolder = new File(this.minecraftFolder + File.separator + "font"));
+    this.packFolderSet.add(this.langFolder = new File(this.minecraftFolder + File.separator + "lang"));
+    this.packFolderSet.add(this.modelsFolder = new File(this.minecraftFolder + File.separator + "models"));
+    this.packFolderSet.add(this.itemModelFolder = new File(this.modelsFolder + File.separator + "item"));
+    this.packFolderSet.add(this.blockModelFolder = new File(this.modelsFolder + File.separator + "block"));
+    this.packFolderSet.add(this.particlesFolder = new File(this.minecraftFolder + File.separator + "particles"));
+    this.packFolderSet.add(this.soundsFolder = new File(this.minecraftFolder + File.separator + "sounds" + File.separator + "custom"));
+    this.packFolderSet.add(this.texturesFolder = new File(this.minecraftFolder + File.separator + "textures"));
+    this.mcmetaFile = new File(this.packFolder, "pack.mcmeta");
+    this.soundsFile = new File(this.minecraftFolder, "sounds.json");
+    final File stampFolder = new File(plugin.getDataFolder() + File.separator + ResourcepackManager.SERVER_TIMESTAMP);
     stampFolder.mkdirs();
-    resourceZipFile = new File(stampFolder, "serverpack.zip");
+    this.resourceZipFile = new File(stampFolder, "serverpack.zip");
   }
 
   private final ObjectLinkedOpenHashSet<File> packFolderSet;
@@ -106,14 +106,14 @@ public class ResourcepackAssembler {
   private final File mcmetaFile;
   private final File soundsFile;
 
-  private void clearPluginFolder(JavaPlugin plugin) {
-    for (File folder : Objects.requireNonNull(plugin.getDataFolder().listFiles())) {
+  private void clearPluginFolder(final JavaPlugin plugin) {
+    for (final File folder : Objects.requireNonNull(plugin.getDataFolder().listFiles())) {
       if (folder.isDirectory()) {
-        String folderName = folder.getName();
+        final String folderName = folder.getName();
         if (folderName.contains("temp") || folderName.matches("[0-9]+")) {
           try {
             FileUtils.deleteDirectory(folder);
-          } catch (IOException e) {
+          } catch (final IOException e) {
             e.printStackTrace();
           }
         }
@@ -123,88 +123,99 @@ public class ResourcepackAssembler {
 
   public void zipResourcepack() throws IOException {
 
-    setupBaseFiles();
+    System.out.println("§a -> SETUP BASE");
+    this.setupBaseFiles();
 
-    createMetaFile();
+    System.out.println("§a -> CREATE META");
+    this.createMetaFile();
 
-    compileModels();
+    System.out.println("§a -> COMPILE MODELS");
+    this.compileModels();
 
-    final FileOutputStream fos = new FileOutputStream(resourceZipFile);
+    System.out.println("§a -> ZIP PACK");
+    final FileOutputStream fos = new FileOutputStream(this.resourceZipFile);
     final ZipOutputStream zos = new ZipOutputStream(fos);
-    zipFile(assetFolder, assetFolder.getName(), zos);
-    zipFile(mcmetaFile, mcmetaFile.getName(), zos);
-
+    this.zipFile(this.assetFolder, this.assetFolder.getName(), zos);
+    this.zipFile(this.mcmetaFile, this.mcmetaFile.getName(), zos);
 
     zos.close();
     fos.close();
   }
 
-  private void createSoundFiles(File tempFolder) {
-    File tempSoundFolder = new File(tempFolder + File.separator + "sounds");
+  private void createSoundFiles(final File tempFolder) {
+    final File tempSoundFolder = new File(tempFolder + File.separator + "sounds");
     if (!tempSoundFolder.exists()) {
       return;
     }
-    JsonObject jsonObject = new JsonObject();
+    final JsonObject jsonObject = new JsonObject();
     try {
-      for (File soundTempFile : Objects.requireNonNull(tempSoundFolder.listFiles())) {
-        String fileName = soundTempFile.getName().toLowerCase();
-        FileUtils.copyFile(soundTempFile, new File(soundsFolder, fileName));
-        JsonObject soundJson = new JsonObject();
-        JsonArray soundList = new JsonArray();
-        String fileStrip = fileName.contains(".") ? fileName.split("\\.")[0] : fileName;
+      for (final File soundTempFile : Objects.requireNonNull(tempSoundFolder.listFiles())) {
+        final String fileName = soundTempFile.getName().toLowerCase();
+        FileUtils.copyFile(soundTempFile, new File(this.soundsFolder, fileName));
+        final JsonObject soundJson = new JsonObject();
+        final JsonArray soundList = new JsonArray();
+        final String fileStrip = fileName.contains(".") ? fileName.split("\\.")[0] : fileName;
         soundList.add("custom/" + fileStrip);
         soundJson.add("sounds", soundList);
         jsonObject.add("custom." + fileStrip, soundJson);
       }
-    } catch (IOException e) {
+    } catch (final IOException e) {
       e.printStackTrace();
     }
     if (!jsonObject.entrySet().isEmpty()) {
-      String data = gson.toJson(jsonObject);
+      final String data = this.gson.toJson(jsonObject);
       try {
-        Files.writeString(soundsFile.toPath(), data);
-      } catch (IOException e) {
+        Files.writeString(this.soundsFile.toPath(), data);
+      } catch (final IOException e) {
         e.printStackTrace();
       }
     }
   }
 
   private void compileModels() throws IOException {
-    final AssetLibrary assetLibrary = new AssetLibrary(plugin);
-    final Path temp = Files.createTempDirectory(plugin.getDataFolder().toPath(), "temp_rp");
+    final AssetLibrary assetLibrary = new AssetLibrary(this.plugin);
+    final Path temp = Files.createTempDirectory(this.plugin.getDataFolder().toPath(), "temp_rp");
     final File tempFolder = temp.toFile();
     final JsonObject fontJson = new JsonObject();
     final JsonArray providerArray = new JsonArray();
     final char fontIndex = (char) 0x2F00;
 
+    System.out.println("§a -> -> export data");
     // Textures
-    exportData(tempFolder);
+    this.exportData(tempFolder);
 
+    System.out.println("§a -> -> load block models");
     // Blocks
-    loadBlockModels(tempFolder);
+    this.loadBlockModels(tempFolder);
 
+    System.out.println("§a -> -> load item models");
     // Items
-    loadItemModels(tempFolder, fontIndex, providerArray);
+    this.loadItemModels(tempFolder, fontIndex, providerArray);
 
+    System.out.println("§a -> -> create skin data");
     // Skins
-    createSkinData();
+    this.createSkinData();
 
+    System.out.println("§a -> -> create ttf");
     // TTF
     // TODO fix ttf
-    createTrueTypeFont(tempFolder, providerArray, fontJson);
+    this.createTrueTypeFont(tempFolder, providerArray, fontJson);
 
+    System.out.println("§a -> -> create model jsons");
     // Json models
-    createModelJsonFiles(assetLibrary);
+    this.createModelJsonFiles(assetLibrary);
 
+    System.out.println("§a -> -> create sounds");
     // Sounds
-    createSoundFiles(tempFolder);
+    this.createSoundFiles(tempFolder);
 
+    System.out.println("§a -> -> delete temp");
     FileUtils.deleteDirectory(tempFolder);
   }
 
 
   private void createMetaFile() throws IOException {
-    final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(mcmetaFile));
+    final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(this.mcmetaFile));
     osw.write(new PackMeta(META_FORMAT, META_DESC).getAsJsonString());
     osw.close();
   }
@@ -229,7 +240,7 @@ public class ResourcepackAssembler {
       final String vanillaName = modelBlock.getBaseMaterial().getKey().getKey();
       final File modelBlockImage = new File(modelBlockFolder, modelBlock.toString() + ".png");
       if (!modelBlockImage.exists()) {
-        plugin.getLogger().severe("Could not find image of " + modelBlock.toString());
+        this.plugin.getLogger().severe("Could not find image of " + modelBlock.toString());
         continue;
       }
 
@@ -256,15 +267,15 @@ public class ResourcepackAssembler {
       final JsonObject textureJson = new JsonObject();
       textureJson.addProperty("all", modelBlock.toString().toLowerCase());
       customModelJson.add("textures", textureJson);
-      FileUtils.copyFile(modelBlockImage, new File(texturesFolder, modelBlock.toString().toLowerCase() + ".png"));
+      FileUtils.copyFile(modelBlockImage, new File(this.texturesFolder, modelBlock.toString().toLowerCase() + ".png"));
       final OutputStreamWriter osw = new OutputStreamWriter(
-          new FileOutputStream(new File(blockModelFolder, modelBlock.toString().toLowerCase() + ".json")), "UTF-8");
+          new FileOutputStream(new File(this.blockModelFolder, modelBlock.toString().toLowerCase() + ".json")), "UTF-8");
       osw.write(this.gson.toJson(customModelJson));
       osw.close();
     }
 
     for (final Entry<String, JsonObject> entry : blockstateJsonMap.entrySet()) {
-      final File stateFile = new File(blockStateFolder, entry.getKey() + ".json");
+      final File stateFile = new File(this.blockStateFolder, entry.getKey() + ".json");
       final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(stateFile), "UTF-8");
       osw.write(this.gson.toJson(entry.getValue()));
       osw.close();
@@ -274,7 +285,7 @@ public class ResourcepackAssembler {
 
   private void loadItemModels(final File tempFolder, char fontIndex, final JsonArray providerArray) throws IOException {
     final File textureTempFolder = new File(tempFolder + File.separator + "textures");
-    final File imageCache = new File(plugin.getDataFolder() + File.separator + "imagecache");
+    final File imageCache = new File(this.plugin.getDataFolder() + File.separator + "imagecache");
     if (!imageCache.exists()) {
       imageCache.mkdirs();
     }
@@ -287,11 +298,11 @@ public class ResourcepackAssembler {
         model.setLinkedImageFile(cachedImage);
         final boolean isBlock = model.getBaseMaterial().isBlock();
         final String nmsName = model.getBaseMaterial().getKey().getKey();
-        final File resourceTextureFolder = new File(texturesFolder + File.separator + nmsName);
+        final File resourceTextureFolder = new File(this.texturesFolder + File.separator + nmsName);
         resourceTextureFolder.mkdirs();
         final File imageFile = new File(resourceTextureFolder, "" + model.getModelID() + ".png");
         FileUtils.copyFile(icon, imageFile);
-        final File modNMFolder = isBlock ? blockModelFolder : itemModelFolder;
+        final File modNMFolder = isBlock ? this.blockModelFolder : this.itemModelFolder;
         final File resourceModelFolder = new File(modNMFolder + File.separator + nmsName);
         resourceModelFolder.mkdirs();
         final File resourceModelFile = new File(resourceModelFolder, "" + model.getModelID() + ".json");
@@ -310,7 +321,7 @@ public class ResourcepackAssembler {
         providerArray.add(fontProvider);
         fontIndex++;
 
-        ModelData modelData = model.getModelData();
+        final ModelData modelData = model.getModelData();
         if (modelData != null) {
           final JsonObject modelJson = new JsonObject();
           modelJson.addProperty("parent", model.getModelData().getModelParent());
@@ -328,7 +339,7 @@ public class ResourcepackAssembler {
             modelJson.add("display", displayJson);
           }
 
-          final String data = gson.toJson(modelJson);
+          final String data = this.gson.toJson(modelJson);
           final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(resourceModelFile));
           osw.write(data);
           osw.close();
@@ -337,7 +348,7 @@ public class ResourcepackAssembler {
     }
 
     // Load custom models
-    final File customtextureFolder = new File(texturesFolder + File.separator + "custom"); // minecraft/textures/custom
+    final File customtextureFolder = new File(this.texturesFolder + File.separator + "custom"); // minecraft/textures/custom
     final File tempCustomModelFolder = new File(tempFolder + File.separator + "custommodel"); // intern
     final File rawTextureFolder = new File(tempFolder + File.separator + "raw"); // intern
     final File customTempModelFolder = new File(tempCustomModelFolder + File.separator + "models"); // intern
@@ -352,7 +363,7 @@ public class ResourcepackAssembler {
       FileUtils.copyFile(textureFile, new File(customtextureFolder, textureFile.getName()));
     }
     // --- --- --- Copy all model files --- --- ---
-    final File customModelFolder = new File(itemModelFolder + File.separator + "custom"); // minecraft/models/items/custom
+    final File customModelFolder = new File(this.itemModelFolder + File.separator + "custom"); // minecraft/models/items/custom
     if (!customModelFolder.exists()) {
       customModelFolder.mkdirs();
     }
@@ -371,7 +382,7 @@ public class ResourcepackAssembler {
 
 
   private void createSkinData() throws IOException {
-    playerSkinManager.loadSkins(skinCacheFile);
+    this.playerSkinManager.loadSkins(this.skinCacheFile);
     final EnumSet<Model> skinlessModels = EnumSet.noneOf(Model.class);
     for (final Model model : Model.values()) {
       if (model.isHeadSkinEnabled()) {
@@ -379,8 +390,8 @@ public class ResourcepackAssembler {
       }
     }
     JsonObject skinJson = new JsonObject();
-    if (skinBackupFile.exists()) {
-      final InputStreamReader isr = new InputStreamReader(new FileInputStream(skinBackupFile));
+    if (this.skinBackupFile.exists()) {
+      final InputStreamReader isr = new InputStreamReader(new FileInputStream(this.skinBackupFile));
       final StringBuilder builder = new StringBuilder();
       int read;
       while ((read = isr.read()) != -1) {
@@ -390,44 +401,44 @@ public class ResourcepackAssembler {
       for (final Entry<String, JsonElement> entry : skinJson.entrySet()) {
         final Model model = Model.valueOf(entry.getKey());
         final int id = entry.getValue().getAsInt();
-        final ConsumingCallback callback = playerSkinManager.callback(model::setSkin);
-        playerSkinManager.requestSkin(id, callback);
+        final ConsumingCallback callback = this.playerSkinManager.callback(model::setSkin);
+        this.playerSkinManager.requestSkin(id, callback);
         while (callback.locked) {
-          await(250);
+          this.await(250);
         }
-        await(100);
+        this.await(100);
         skinlessModels.remove(model);
       }
       isr.close();
     }
     final JsonObject skinWriteJson = skinJson;
-    final File uploadFolder = new File(plugin.getDataFolder() + File.separator + "uploadcache");
+    final File uploadFolder = new File(this.plugin.getDataFolder() + File.separator + "uploadcache");
     if (!uploadFolder.exists()) {
       uploadFolder.mkdirs();
     }
     for (final Model model : skinlessModels) {
       final File imageFile = model.getLinkedImageFile();
       Preconditions.checkState(imageFile != null);
-      final ConsumingCallback callback = playerSkinManager.callback(skin -> {
+      final ConsumingCallback callback = this.playerSkinManager.callback(skin -> {
         if (skin != null) {
           skinWriteJson.addProperty(model.toString(), "" + skin.id);
           model.setSkin(skin);
         } else {
-          plugin.getLogger().warning("Callback on skin is null!");
+          this.plugin.getLogger().warning("Callback on skin is null!");
         }
       });
-      playerSkinManager.uploadAndScaleHeadImage(imageFile, "AC_MODEL_" + model.toString(), callback);
+      this.playerSkinManager.uploadAndScaleHeadImage(imageFile, "AC_MODEL_" + model.toString(), callback);
       while (callback.locked) {
-        await(250);
+        this.await(250);
       }
-      await(100);
+      this.await(100);
     }
 
-    final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(skinBackupFile));
+    final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(this.skinBackupFile));
     osw.write(this.gson.toJson(skinWriteJson));
     osw.close();
 
-    playerSkinManager.cacheSkins(skinCacheFile);
+    this.playerSkinManager.cacheSkins(this.skinCacheFile);
   }
 
 
@@ -445,17 +456,17 @@ public class ResourcepackAssembler {
     //providerArray.add(ttfProvider);
 
     final File ttfFile = new File(tempFolder, "uniformcenter.ttf");
-    FileUtils.copyFile(ttfFile, new File(fontFolder, "uniformcenter.ttf"));
+    FileUtils.copyFile(ttfFile, new File(this.fontFolder, "uniformcenter.ttf"));
 
-    File tempUnicodeFolder = new File(tempFolder + File.separator + "fontdata");
-    File unicodeFolder = new File(texturesFolder + File.separator + "font");
+    final File tempUnicodeFolder = new File(tempFolder + File.separator + "fontdata");
+    final File unicodeFolder = new File(this.texturesFolder + File.separator + "font");
     unicodeFolder.mkdirs();
-    for (File unicodeImage : tempUnicodeFolder.listFiles()) {
+    for (final File unicodeImage : tempUnicodeFolder.listFiles()) {
       FileUtils.copyFile(unicodeImage, new File(unicodeFolder, unicodeImage.getName()));
     }
 
     fontJson.add("providers", providerArray);
-    final File fontFile = new File(fontFolder, "default.json");
+    final File fontFile = new File(this.fontFolder, "default.json");
     final OutputStreamWriter oswFont = new OutputStreamWriter(new FileOutputStream(fontFile), StandardCharsets.UTF_8);
     oswFont.write(this.gson.toJson(fontJson));
     oswFont.close();
@@ -513,10 +524,10 @@ public class ResourcepackAssembler {
 
     for (final Model model : Model.values()) {
       if (model.getModelData() != null) {
-        final File modelFolder = model.getBaseMaterial().isBlock() ? blockModelFolder : itemModelFolder;
+        final File modelFolder = model.getBaseMaterial().isBlock() ? this.blockModelFolder : this.itemModelFolder;
         final File modelFile = new File(modelFolder, model.getBaseMaterial().getKey().getKey() + ".json");
         final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(modelFile));
-        osw.write(gson.toJson(cachedJsons.get(model.getBaseMaterial())));
+        osw.write(this.gson.toJson(cachedJsons.get(model.getBaseMaterial())));
         osw.close();
       }
     }
@@ -524,8 +535,8 @@ public class ResourcepackAssembler {
 
 
   private void setupBaseFiles() throws IOException {
-    FileUtils.deleteDirectory(assetFolder);
-    for (final File folder : packFolderSet) {
+    FileUtils.deleteDirectory(this.assetFolder);
+    for (final File folder : this.packFolderSet) {
       folder.mkdirs();
     }
   }
@@ -545,7 +556,7 @@ public class ResourcepackAssembler {
       }
       final File[] children = fileToZip.listFiles();
       for (final File childFile : children) {
-        zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
+        this.zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
       }
       return;
     }
