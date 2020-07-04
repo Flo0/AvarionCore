@@ -17,7 +17,7 @@ public class EconomyAccount {
   public static String MONEY_SINGULAR = "$";
   public static String MONEY_PLURAL = "$";
 
-  public EconomyAccount(JsonObject jsonObject) {
+  public EconomyAccount(final JsonObject jsonObject) {
     this.balance = jsonObject.get("Balance").getAsDouble();
     this.bankBalance = jsonObject.get("BankBalance").getAsDouble();
   }
@@ -32,35 +32,35 @@ public class EconomyAccount {
   @Getter
   private double bankBalance;
 
-  public void remove(double amount) {
+  public void remove(final double amount) {
     this.balance -= amount;
   }
 
-  public void removeBank(double amount) {
+  public void removeBank(final double amount) {
     this.bankBalance -= amount;
   }
 
-  public void add(double amount) {
+  public void add(final double amount) {
     this.balance += amount;
   }
 
-  public void addBank(double amount) {
+  public void addBank(final double amount) {
     this.bankBalance += amount;
   }
 
-  public void set(double amount) {
+  public void set(final double amount) {
     this.balance = amount;
   }
 
-  public void setBank(double amount) {
+  public void setBank(final double amount) {
     this.bankBalance = amount;
   }
 
   public JsonObject getAsJson() {
-    JsonObject jsonObject = new JsonObject();
+    final JsonObject jsonObject = new JsonObject();
 
-    jsonObject.addProperty("Balance", balance);
-    jsonObject.addProperty("BankBalance", balance);
+    jsonObject.addProperty("Balance", this.balance);
+    jsonObject.addProperty("BankBalance", this.bankBalance);
 
     return jsonObject;
   }

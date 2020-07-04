@@ -16,7 +16,7 @@ import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,7 +92,7 @@ public class AvarionPlayer {
     }
   }
 
-  public void onLogin(final PlayerLoginEvent event) {
+  public void onLogin(final PlayerJoinEvent event) {
     final Player player = event.getPlayer();
     for (final Msg.Pack msgPack : this.messages) {
       Msg.send(player, msgPack.getModuleName(), msgPack.getMessage());

@@ -78,6 +78,9 @@ public class AvarionCommandManager {
           futurePlayer.complete(this.avarionCore.getAvarionDataManager().getOnlineData(player.getUniqueId()));
         } else {
           final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
+          if (!offlinePlayer.hasPlayedBefore()) {
+            throw new IllegalArgumentException("No offline player in database? -> " + offlinePlayer.getName());
+          }
           try {
             futurePlayer.complete(this.avarionCore.getAvarionDataManager().getData(offlinePlayer.getUniqueId()).get());
           } catch (final InterruptedException | ExecutionException e) {

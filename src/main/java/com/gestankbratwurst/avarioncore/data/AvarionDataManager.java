@@ -19,7 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -106,7 +106,7 @@ public class AvarionDataManager implements Listener, AsyncCacheLoader<UUID, Avar
   }
 
   @EventHandler
-  public void onLogin(final PlayerLoginEvent event) {
+  public void onLogin(final PlayerJoinEvent event) {
     this.onlinePlayerMap.get(event.getPlayer().getUniqueId()).onLogin(event);
   }
 
