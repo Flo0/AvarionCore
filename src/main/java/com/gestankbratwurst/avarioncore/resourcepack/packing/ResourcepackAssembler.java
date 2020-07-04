@@ -289,6 +289,7 @@ public class ResourcepackAssembler {
     if (!imageCache.exists()) {
       imageCache.mkdirs();
     }
+    System.out.println("§a -> -> -> load static models");
     // Load static models
     for (final File subFolder : textureTempFolder.listFiles()) {
       for (final File icon : subFolder.listFiles()) {
@@ -347,6 +348,7 @@ public class ResourcepackAssembler {
       }
     }
 
+    System.out.println("§a -> -> -> load custom models");
     // Load custom models
     final File customtextureFolder = new File(this.texturesFolder + File.separator + "custom"); // minecraft/textures/custom
     final File tempCustomModelFolder = new File(tempFolder + File.separator + "custommodel"); // intern
@@ -355,6 +357,7 @@ public class ResourcepackAssembler {
     final File customTempTextureFolder = new File(tempCustomModelFolder + File.separator + "textures"); // intern
     // itemModelFolder
 
+    System.out.println("§a -> -> -> copy textures");
     // --- --- --- Copy all textures --- --- ---
     if (!customtextureFolder.exists()) {
       customtextureFolder.mkdirs();
@@ -362,12 +365,15 @@ public class ResourcepackAssembler {
     for (final File textureFile : customTempTextureFolder.listFiles()) {
       FileUtils.copyFile(textureFile, new File(customtextureFolder, textureFile.getName()));
     }
+
+    System.out.println("§a -> -> -> copy model files");
     // --- --- --- Copy all model files --- --- ---
     final File customModelFolder = new File(this.itemModelFolder + File.separator + "custom"); // minecraft/models/items/custom
     if (!customModelFolder.exists()) {
       customModelFolder.mkdirs();
     }
 
+    System.out.println("§a -> -> -> load cModels");
     for (final File cModelFileFolder : customTempModelFolder.listFiles()) {
       for (final File cModelFile : cModelFileFolder.listFiles()) {
         Model.valueOf(cModelFile.getName().replace(".json", ""));
