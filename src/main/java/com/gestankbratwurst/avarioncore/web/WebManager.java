@@ -30,7 +30,7 @@ public class WebManager {
 
   private final AvarionCore avarionCore;
   private final String responseOk = "HTTP/1.1 204 OK\r\n\r\n";
-  private final String responseDeny = "HTTP/1.1 400 Bad Request\r\n\r\n";
+  private final String responseDeny = "HTTP/1.1 204 Wrong password\r\n\r\n";
   private final String password = "043tgnnga9e8hz6imujhhnuhnady94wzhnrzfh09m4w5hsnrnh89er";
 
   private void listenForRestart() {
