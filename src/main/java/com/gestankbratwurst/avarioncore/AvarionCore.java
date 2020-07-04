@@ -83,10 +83,10 @@ public final class AvarionCore extends JavaPlugin {
 
   @Override
   public void onDisable() {
-    this.resourcepackModule.disable(this);
     this.protectionManager.flushData();
     this.avarionDataManager.flushData();
     UtilBlock.terminate(this);
+    this.resourcepackModule.disable(this);
   }
 
 }
