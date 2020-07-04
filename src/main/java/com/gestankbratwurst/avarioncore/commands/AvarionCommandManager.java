@@ -8,10 +8,15 @@ import com.gestankbratwurst.avarioncore.commands.impl.ProtectionCommand;
 import com.gestankbratwurst.avarioncore.data.FutureAvarionPlayer;
 import com.gestankbratwurst.avarioncore.protection.ProtectionRule;
 import com.gestankbratwurst.avarioncore.protection.RuleState;
+import com.gestankbratwurst.avarioncore.resourcepack.skins.Model;
+import com.gestankbratwurst.avarioncore.resourcepack.skins.ModelItemCommand;
+import com.gestankbratwurst.avarioncore.resourcepack.sounds.CustomSound;
+import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import net.minecraft.server.v1_16_R1.SoundCategory;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -36,6 +41,16 @@ public class AvarionCommandManager {
   private final PaperCommandManager commandManager;
 
   public void registerCompletions() {
+
+    this.commandManager.getCommandCompletions().registerStaticCompletion("ModelItem",
+        ImmutableList.copyOf(Arrays.stream(Model.values()).map(Enum::toString).collect(Collectors.toList())));
+
+    this.commandManager.getCommandCompletions().registerStaticCompletion("CustomSound",
+        ImmutableList.copyOf(Arrays.stream(CustomSound.values()).map(Enum::toString).collect(Collectors.toList())));
+
+    this.commandManager.getCommandCompletions().registerStaticCompletion("SoundCategory",
+        ImmutableList.copyOf(Arrays.stream(SoundCategory.values()).map(Enum::toString).collect(Collectors.toList())));
+
     this.commandManager.getCommandCompletions().registerStaticCompletion("ProtectionRule", Arrays
         .stream(ProtectionRule.values())
         .map(Enum::toString)
@@ -79,6 +94,8 @@ public class AvarionCommandManager {
     this.commandManager.registerCommand(new ProtectionCommand(this.avarionCore.getProtectionManager()));
     this.commandManager.registerCommand(new FriendCommand(this.avarionCore));
     this.commandManager.registerCommand(new EconomyCommand(this.avarionCore.getMoneyItemHandler()));
+    this.commandManager.registerCommand(new ModelItemCommand());
+
   }
 
 }

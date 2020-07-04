@@ -5,7 +5,6 @@ import com.gestankbratwurst.avarioncore.util.actionbar.ActionBarManager;
 import com.gestankbratwurst.avarioncore.util.common.BukkitTime;
 import com.gestankbratwurst.avarioncore.util.common.NameSpaceFactory;
 import com.gestankbratwurst.avarioncore.util.common.UtilBlock;
-import com.gestankbratwurst.avarioncore.util.common.UtilChunk;
 import com.gestankbratwurst.avarioncore.util.common.UtilItem;
 import com.gestankbratwurst.avarioncore.util.common.UtilMobs;
 import com.gestankbratwurst.avarioncore.util.common.UtilPlayer;
@@ -47,13 +46,12 @@ public class UtilModule {
     new AnvilAPI(plugin);
     plugin.setDisplayCompiler(new ItemDisplayCompiler(plugin));
     plugin.getProtocolManager().addPacketListener(plugin.getDisplayCompiler());
-    hologramManager = new HologramManager(plugin);
-    playerSkinManager = new PlayerSkinManager();
-    plugin.getCommandManager().registerCommand(new TestCommand(hologramManager));
-    actionBarManager = new ActionBarManager(plugin);
-    infoBarManager = new InfoBarManager(plugin, (entity) -> new InfoBar(entity, infoBarManager));
-    protocolAPI = new ProtocolAPI(plugin);
-    npcAPI = new NpcAPI(plugin);
+    this.hologramManager = new HologramManager(plugin);
+    this.playerSkinManager = new PlayerSkinManager();
+    this.actionBarManager = new ActionBarManager(plugin);
+    this.infoBarManager = new InfoBarManager(plugin, (entity) -> new InfoBar(entity, this.infoBarManager));
+    this.protocolAPI = new ProtocolAPI(plugin);
+    this.npcAPI = new NpcAPI(plugin);
 //    tabListManager = new TabListManager(plugin, (p) -> et);
 //    et = new EmptyTablist(tabListManager);
   }

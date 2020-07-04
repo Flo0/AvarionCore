@@ -4,15 +4,8 @@ import com.gestankbratwurst.avarioncore.AvarionCore;
 import com.gestankbratwurst.avarioncore.resourcepack.distribution.ResourcepackListener;
 import com.gestankbratwurst.avarioncore.resourcepack.distribution.ResourcepackManager;
 import com.gestankbratwurst.avarioncore.resourcepack.packing.ResourcepackAssembler;
-import com.gestankbratwurst.avarioncore.resourcepack.skins.Model;
-import com.gestankbratwurst.avarioncore.resourcepack.skins.ModelItemCommand;
-import com.gestankbratwurst.avarioncore.resourcepack.sounds.CustomSound;
-import com.google.common.collect.ImmutableList;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-import net.minecraft.server.v1_16_R1.SoundCategory;
 import org.bukkit.Bukkit;
 
 public class ResourcepackModule {
@@ -27,31 +20,17 @@ public class ResourcepackModule {
     CompletableFuture.runAsync(() -> {
       try {
         new ResourcepackAssembler(plugin).zipResourcepack();
-      } catch (IOException e) {
+      } catch (final IOException e) {
         e.printStackTrace();
       }
     }).thenRun(() -> {
-      resourcepackManager = new ResourcepackManager(plugin);
-      Bukkit.getPluginManager().registerEvents(new ResourcepackListener(plugin, resourcepackManager), plugin);
+      this.resourcepackManager = new ResourcepackManager(plugin);
+      Bukkit.getPluginManager().registerEvents(new ResourcepackListener(plugin, this.resourcepackManager), plugin);
     });
-
-    plugin.getCommandManager().registerCommand(new ModelItemCommand());
-    plugin.getCommandManager()
-        .getCommandCompletions()
-        .registerStaticCompletion("ModelItem",
-            ImmutableList.copyOf(Arrays.stream(Model.values()).map(Enum::toString).collect(Collectors.toList())));
-    plugin.getCommandManager()
-        .getCommandCompletions()
-        .registerStaticCompletion("CustomSound",
-            ImmutableList.copyOf(Arrays.stream(CustomSound.values()).map(Enum::toString).collect(Collectors.toList())));
-    plugin.getCommandManager()
-        .getCommandCompletions()
-        .registerStaticCompletion("SoundCategory",
-            ImmutableList.copyOf(Arrays.stream(SoundCategory.values()).map(Enum::toString).collect(Collectors.toList())));
   }
 
   public void disable(final AvarionCore plugin) {
-    resourcepackManager.shutdown();
+    this.resourcepackManager.shutdown();
   }
 
 }
