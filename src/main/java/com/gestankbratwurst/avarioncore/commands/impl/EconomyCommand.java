@@ -5,7 +5,6 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Subcommand;
-import co.aikar.commands.annotation.Values;
 import com.gestankbratwurst.avarioncore.data.FutureAvarionPlayer;
 import com.gestankbratwurst.avarioncore.economy.EconomyAccount;
 import com.gestankbratwurst.avarioncore.economy.MoneyItemHandler;
@@ -58,8 +57,8 @@ public class EconomyCommand extends BaseCommand {
 
   @Subcommand("admin add")
   @CommandPermission("admin")
-  @CommandCompletion("@AvarionPlayerAsync <Menge>")
-  public void onAdminAdd(final Player player, @Values("@AvarionPlayerAsync") final FutureAvarionPlayer futurePlayer, final double amount) {
+  @CommandCompletion("@AvarionPlayerAsync")
+  public void onAdminAdd(final Player player, final FutureAvarionPlayer futurePlayer, final double amount) {
 
     futurePlayer.thenAccept(avPlayer -> {
       avPlayer.getEconomyAccount().add(amount);
