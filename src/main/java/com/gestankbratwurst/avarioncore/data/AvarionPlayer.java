@@ -122,6 +122,7 @@ public class AvarionPlayer {
     if (player != null) {
       Msg.send(player, module, message);
     } else if (persistent) {
+      System.out.println("PERSISTENT ADDED");
       this.messages.add(new Msg.Pack(module, message));
     }
   }

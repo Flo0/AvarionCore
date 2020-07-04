@@ -4,7 +4,9 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
+import com.gestankbratwurst.avarioncore.AvarionCore;
 import com.gestankbratwurst.avarioncore.data.FutureAvarionPlayer;
 import com.gestankbratwurst.avarioncore.economy.EconomyAccount;
 import com.gestankbratwurst.avarioncore.economy.MoneyItemHandler;
@@ -31,6 +33,18 @@ import org.bukkit.util.RayTraceResult;
 public class EconomyCommand extends BaseCommand {
 
   private final MoneyItemHandler moneyItemHandler;
+
+  @Default
+  public void onDefault(final Player player) {
+    final EconomyAccount ea = Objects.requireNonNull(AvarionCore.getInstance().
+        getAvarionDataManager()
+        .getOnlineData(player.getUniqueId()))
+        .getEconomyAccount();
+
+    player.sendMessage("§e[ ----- Geld ----- ]");
+    player.sendMessage("§f Dabei: §e" + ea.getBalance());
+    player.sendMessage("§f Bank: §e" + ea.getBankBalance());
+  }
 
   @Subcommand("drop")
   @CommandPermission("admin")
