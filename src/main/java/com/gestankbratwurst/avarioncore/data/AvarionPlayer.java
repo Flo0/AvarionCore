@@ -4,7 +4,6 @@ import com.gestankbratwurst.avarioncore.economy.EconomyAccount;
 import com.gestankbratwurst.avarioncore.friends.FriendAccount;
 import com.gestankbratwurst.avarioncore.friends.FriendsMainGUI;
 import com.gestankbratwurst.avarioncore.util.Msg;
-import com.gestankbratwurst.avarioncore.util.Msg.Pack;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -28,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AvarionPlayer {
 
-  public AvarionPlayer(UUID playerID) {
+  public AvarionPlayer(final UUID playerID) {
     this.playerID = playerID;
     this.lastInstanceTime = System.currentTimeMillis();
     this.economyAccount = new EconomyAccount();
@@ -36,14 +35,14 @@ public class AvarionPlayer {
     this.messages = new ArrayList<>();
   }
 
-  public AvarionPlayer(JsonObject jsonObject) {
+  public AvarionPlayer(final JsonObject jsonObject) {
     this.playerID = UUID.fromString(jsonObject.get("PlayerID").getAsString());
     this.lastInstanceTime = System.currentTimeMillis();
     this.economyAccount = new EconomyAccount(jsonObject.get("EconomyAccount").getAsJsonObject());
     this.friendAccount = new FriendAccount(jsonObject.get("FriendAccount").getAsJsonObject(), this);
     this.messages = new ArrayList<>();
-    for (JsonElement element : jsonObject.get("Messages").getAsJsonArray()) {
-      messages.add(new Msg.Pack(element.getAsJsonObject()));
+    for (final JsonElement element : jsonObject.get("Messages").getAsJsonArray()) {
+      this.messages.add(new Msg.Pack(element.getAsJsonObject()));
     }
   }
 
@@ -61,41 +60,41 @@ public class AvarionPlayer {
     FriendsMainGUI.open(this);
   }
 
-  public void onLogin(PlayerLoginEvent event) {
-    for (Msg.Pack msgPack : messages) {
+  public void onLogin(final PlayerLoginEvent event) {
+    for (final Msg.Pack msgPack : this.messages) {
       Msg.send(event.getPlayer(), msgPack.getModuleName(), msgPack.getMessage());
     }
-    messages.clear();
+    this.messages.clear();
   }
 
   @Nullable
   public Player getPlayer() {
-    return Bukkit.getPlayer(playerID);
+    return Bukkit.getPlayer(this.playerID);
   }
 
-  public void sendMessage(String module, String message) {
+  public void sendMessage(final String module, final String message) {
     this.sendMessage(module, message, false);
   }
 
-  public void sendMessage(String module, String message, boolean persistent) {
-    Player player = getPlayer();
+  public void sendMessage(final String module, final String message, final boolean persistent) {
+    final Player player = this.getPlayer();
     if (player != null) {
       Msg.send(player, module, message);
     } else if (persistent) {
-      messages.add(new Msg.Pack(module, message));
+      this.messages.add(new Msg.Pack(module, message));
     }
   }
 
   public JsonObject getAsJson() {
-    JsonObject json = new JsonObject();
-    json.addProperty("PlayerID", playerID.toString());
-    json.addProperty("LastInstanceTime", lastInstanceTime);
-    json.add("EconomyAccount", economyAccount.getAsJson());
-    json.add("FriendAccount", friendAccount.getAsJson());
+    final JsonObject json = new JsonObject();
+    json.addProperty("PlayerID", this.playerID.toString());
+    json.addProperty("LastInstanceTime", this.lastInstanceTime);
+    json.add("EconomyAccount", this.economyAccount.getAsJson());
+    json.add("FriendAccount", this.friendAccount.getAsJson());
 
-    JsonArray messageArray = new JsonArray();
+    final JsonArray messageArray = new JsonArray();
 
-    for (Msg.Pack msgPack : messages) {
+    for (final Msg.Pack msgPack : this.messages) {
       messageArray.add(msgPack.getAsJson());
     }
 

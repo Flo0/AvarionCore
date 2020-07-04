@@ -19,6 +19,7 @@ import com.gestankbratwurst.avarioncore.util.Msg;
 import com.gestankbratwurst.avarioncore.util.UtilModule;
 import com.gestankbratwurst.avarioncore.util.common.UtilBlock;
 import com.gestankbratwurst.avarioncore.util.items.display.ItemDisplayCompiler;
+import com.gestankbratwurst.avarioncore.web.WebManager;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import lombok.Getter;
@@ -52,6 +53,8 @@ public final class AvarionCore extends JavaPlugin {
   private ProtectionManager protectionManager;
   @Getter
   private MoneyItemHandler moneyItemHandler;
+  @Getter
+  private WebManager webManager;
 
   @Override
   public void onEnable() {
@@ -75,6 +78,8 @@ public final class AvarionCore extends JavaPlugin {
     this.protectionManager = new ProtectionManager(this);
 
     this.moneyItemHandler = new MoneyItemHandler(this);
+    
+    this.webManager = new WebManager(this);
 
     this.registerCommands();
   }
