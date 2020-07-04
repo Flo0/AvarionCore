@@ -123,16 +123,12 @@ public class ResourcepackAssembler {
 
   public void zipResourcepack() throws IOException {
 
-    System.out.println("§a -> SETUP BASE");
     this.setupBaseFiles();
 
-    System.out.println("§a -> CREATE META");
     this.createMetaFile();
 
-    System.out.println("§a -> COMPILE MODELS");
     this.compileModels();
 
-    System.out.println("§a -> ZIP PACK");
     final FileOutputStream fos = new FileOutputStream(this.resourceZipFile);
     final ZipOutputStream zos = new ZipOutputStream(fos);
     this.zipFile(this.assetFolder, this.assetFolder.getName(), zos);
@@ -180,36 +176,28 @@ public class ResourcepackAssembler {
     final JsonArray providerArray = new JsonArray();
     final char fontIndex = (char) 0x2F00;
 
-    System.out.println("§a -> -> export data");
     // Textures
     this.exportData(tempFolder);
 
-    System.out.println("§a -> -> load block models");
     // Blocks
     this.loadBlockModels(tempFolder);
 
-    System.out.println("§a -> -> load item models");
     // Items
     this.loadItemModels(tempFolder, fontIndex, providerArray);
 
-    System.out.println("§a -> -> create skin data");
     // Skins
     this.createSkinData();
 
-    System.out.println("§a -> -> create ttf");
     // TTF
     // TODO fix ttf
     this.createTrueTypeFont(tempFolder, providerArray, fontJson);
 
-    System.out.println("§a -> -> create model jsons");
     // Json models
     this.createModelJsonFiles(assetLibrary);
 
-    System.out.println("§a -> -> create sounds");
     // Sounds
     this.createSoundFiles(tempFolder);
 
-    System.out.println("§a -> -> delete temp");
     FileUtils.deleteDirectory(tempFolder);
   }
 
@@ -289,7 +277,7 @@ public class ResourcepackAssembler {
     if (!imageCache.exists()) {
       imageCache.mkdirs();
     }
-    System.out.println("§a -> -> -> load static models");
+
     // Load static models
     for (final File subFolder : textureTempFolder.listFiles()) {
       for (final File icon : subFolder.listFiles()) {
@@ -348,7 +336,6 @@ public class ResourcepackAssembler {
       }
     }
 
-    System.out.println("§a -> -> -> load custom models");
     // Load custom models
     final File customtextureFolder = new File(this.texturesFolder + File.separator + "custom"); // minecraft/textures/custom
     final File tempCustomModelFolder = new File(tempFolder + File.separator + "custommodel"); // intern
@@ -357,7 +344,6 @@ public class ResourcepackAssembler {
     final File customTempTextureFolder = new File(tempCustomModelFolder + File.separator + "textures"); // intern
     // itemModelFolder
 
-    System.out.println("§a -> -> -> copy textures");
     // --- --- --- Copy all textures --- --- ---
     if (!customtextureFolder.exists()) {
       customtextureFolder.mkdirs();
@@ -366,20 +352,16 @@ public class ResourcepackAssembler {
       FileUtils.copyFile(textureFile, new File(customtextureFolder, textureFile.getName()));
     }
 
-    System.out.println("§a -> -> -> copy model files");
     // --- --- --- Copy all model files --- --- ---
     final File customModelFolder = new File(this.itemModelFolder + File.separator + "custom"); // minecraft/models/items/custom
     if (!customModelFolder.exists()) {
       customModelFolder.mkdirs();
     }
 
-    System.out.println("§a -> -> -> load cModels");
     for (final File cModelFileFolder : customTempModelFolder.listFiles()) {
       for (final File cModelFile : cModelFileFolder.listFiles()) {
-        System.out.println("§a -> -> -> -> loading: " + cModelFile.getName().replace(".json", ""));
         Model.valueOf(cModelFile.getName().replace(".json", ""));
         FileUtils.copyFile(cModelFile, new File(customModelFolder, cModelFile.getName().toLowerCase()));
-        System.out.println("§a -> -> -> -> done   : " + cModelFile.getName().replace(".json", ""));
       }
     }
 
