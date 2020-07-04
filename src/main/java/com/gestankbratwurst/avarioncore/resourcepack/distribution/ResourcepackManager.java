@@ -19,41 +19,41 @@ public class ResourcepackManager {
 
   // "176.9.38.108"
   private final int port = 9555;
-  private final String host = "localhost";
+  private final String host = "176.9.38.108";
   private final String hash;
 
   private ResourcepackServer server;
   private final File pack;
 
   public ResourcepackManager(final AvarionCore plugin) {
-    File stampFolder = new File(plugin.getDataFolder() + File.separator + SERVER_TIMESTAMP);
-    pack = new File(stampFolder, RESOURCEPACK_FILE_NAME);
-    hash = getFileHashChecksum(pack, plugin);
+    final File stampFolder = new File(plugin.getDataFolder() + File.separator + SERVER_TIMESTAMP);
+    this.pack = new File(stampFolder, RESOURCEPACK_FILE_NAME);
+    this.hash = this.getFileHashChecksum(this.pack, plugin);
     CompletableFuture.runAsync(() -> this.startServer(plugin));
   }
 
   public String getResourceHash() {
-    return hash;
+    return this.hash;
   }
 
   public String getDownloadURL() {
-    return "http://" + host + ":" + port + "/" + SERVER_TIMESTAMP + "/" + RESOURCEPACK_FILE_NAME;
+    return "http://" + this.host + ":" + this.port + "/" + SERVER_TIMESTAMP + "/" + RESOURCEPACK_FILE_NAME;
   }
 
   public void shutdown() {
-    server.terminate();
+    this.server.terminate();
   }
 
 
-  private void startServer(AvarionCore plugin) {
+  private void startServer(final AvarionCore plugin) {
     plugin.getLogger().info("Starting async HTTP Server");
     try {
-      server = new ResourcepackServer(port) {
+      this.server = new ResourcepackServer(this.port) {
 
         @Override
         public File requestFileCallback(final ResourceServerConnection connection,
             final String request) {
-          final Player player = getAddress(connection);
+          final Player player = ResourcepackManager.this.getAddress(connection);
 
           if (player == null) {
             // Connection from unknown IP, refuse connection.
@@ -63,7 +63,7 @@ public class ResourcepackManager {
               "Connection " + connection.getClient().getInetAddress() + " is requesting + "
                   + request);
           // Return the .zip file
-          return pack;
+          return ResourcepackManager.this.pack;
         }
 
         @Override
@@ -89,7 +89,7 @@ public class ResourcepackManager {
         }
       };
 
-      server.start();
+      this.server.start();
       plugin.getLogger().info("Successfully started the HTTP Server");
     } catch (final IOException ex) {
       plugin.getLogger().severe("Failed to start HTTP ResourceServer!");
@@ -97,7 +97,7 @@ public class ResourcepackManager {
     }
   }
 
-  private String getFileHashChecksum(final File input, JavaPlugin plugin) {
+  private String getFileHashChecksum(final File input, final JavaPlugin plugin) {
     try {
       return Files.hash(input, Hashing.sha1()).toString();
     } catch (final IOException e) {
