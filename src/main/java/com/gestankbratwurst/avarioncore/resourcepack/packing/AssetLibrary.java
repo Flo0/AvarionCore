@@ -24,12 +24,12 @@ import java.util.Map;
  */
 public class AssetLibrary {
 
-  private static final String ASSET_URL = "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.14.4/assets/minecraft/models/";
+  private static final String ASSET_URL = "https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.16.1/assets/minecraft/models/";
 
   protected AssetLibrary(final AvarionCore plugin) {
     this.plugin = plugin;
-    itemModelDefaultAssets = Maps.newHashMap();
-    iterateAssets();
+    this.itemModelDefaultAssets = Maps.newHashMap();
+    this.iterateAssets();
   }
 
   private final AvarionCore plugin;
@@ -40,15 +40,15 @@ public class AssetLibrary {
     for (final Model model : Model.values()) {
       final String modelFolder = model.getBaseMaterial().isBlock() ? "block" : "item";
       final String nmsName = model.getBaseMaterial().getKey().getKey();
-      if (!itemModelDefaultAssets.containsKey(nmsName)) {
+      if (!this.itemModelDefaultAssets.containsKey(nmsName)) {
         final String jsonUrl = ASSET_URL + modelFolder + "/" + nmsName + ".json";
-        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-        String request = jsonGetRequest(jsonUrl);
+        final Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        final String request = this.jsonGetRequest(jsonUrl);
         if (request == null) {
           return;
         }
         final JsonObject json = gson.fromJson(request, JsonObject.class);
-        itemModelDefaultAssets.put(nmsName, json);
+        this.itemModelDefaultAssets.put(nmsName, json);
       }
     }
 
@@ -80,11 +80,11 @@ public class AssetLibrary {
   }
 
   protected String getAssetModelParent(final String nmsKey) {
-    return itemModelDefaultAssets.get(nmsKey).get("parent").getAsString();
+    return this.itemModelDefaultAssets.get(nmsKey).get("parent").getAsString();
   }
 
   protected String getAssetModelLayer0(final String nmsKey) {
-    return itemModelDefaultAssets.get(nmsKey)
+    return this.itemModelDefaultAssets.get(nmsKey)
         .get("textures")
         .getAsJsonObject()
         .get("layer0").getAsString();
