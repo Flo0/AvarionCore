@@ -72,7 +72,10 @@ public class AvarionCommandManager {
       final FutureAvarionPlayer futurePlayer = new FutureAvarionPlayer();
 
       CompletableFuture.runAsync(() -> {
-        final String name = context.popFirstArg();
+        final String name = context.getArgs().get(0);
+        for (final String arg : context.getArgs()) {
+          System.out.println(arg);
+        }
         final Player player = Bukkit.getPlayer(name);
         if (player != null) {
           futurePlayer.complete(this.avarionCore.getAvarionDataManager().getOnlineData(player.getUniqueId()));

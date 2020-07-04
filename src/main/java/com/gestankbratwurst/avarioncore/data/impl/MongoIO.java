@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 /*******************************************************
@@ -98,7 +99,9 @@ public class MongoIO implements AvarionIO {
       filter.put("LastSeenName", 1);
       for (final Document document : this.playerCollection.find().projection(filter)) {
         this.playerNameCache.add(document.getString("LastSeenName"));
+        Bukkit.getOnlinePlayers().forEach(pl -> this.playerNameCache.add(pl.getName()));
       }
+      this.playerNameCache.remove("NONE");
       return new ArrayList<>(this.playerNameCache);
     }
 
