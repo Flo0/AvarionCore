@@ -27,8 +27,11 @@ public class ResourcepackManager {
 
   public ResourcepackManager(final AvarionCore plugin) {
     final File stampFolder = new File(plugin.getDataFolder() + File.separator + SERVER_TIMESTAMP);
+    System.out.println("§a -> PACK");
     this.pack = new File(stampFolder, RESOURCEPACK_FILE_NAME);
+    System.out.println("§a -> HASH");
     this.hash = this.getFileHashChecksum(this.pack, plugin);
+    System.out.println("§a -> START");
     CompletableFuture.runAsync(() -> this.startServer(plugin));
   }
 

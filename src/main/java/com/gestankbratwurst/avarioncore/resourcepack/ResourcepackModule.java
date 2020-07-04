@@ -19,18 +19,25 @@ public class ResourcepackModule {
   public void enable(final AvarionCore plugin) {
     CompletableFuture.runAsync(() -> {
       try {
+        System.out.println("§a -> PRE_ASSEMBLER");
         new ResourcepackAssembler(plugin).zipResourcepack();
+        System.out.println("§a -> POST_ASSEMBLER");
       } catch (final IOException e) {
         e.printStackTrace();
       }
     }).thenRun(() -> {
+      System.out.println("§a -> MANAGER");
       this.resourcepackManager = new ResourcepackManager(plugin);
       Bukkit.getPluginManager().registerEvents(new ResourcepackListener(plugin, this.resourcepackManager), plugin);
     });
   }
 
   public void disable(final AvarionCore plugin) {
-    this.resourcepackManager.shutdown();
+    if (this.resourcepackManager == null) {
+      System.out.println("§c ResourcepackManager is null.");
+    } else {
+      this.resourcepackManager.shutdown();
+    }
   }
 
 }
