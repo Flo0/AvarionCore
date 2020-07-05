@@ -18,6 +18,7 @@ import net.crytec.libs.protocol.holograms.infobars.InfoBarManager;
 import net.crytec.libs.protocol.npc.NpcAPI;
 import net.crytec.libs.protocol.skinclient.PlayerSkinManager;
 import net.crytec.libs.protocol.tablist.TabListManager;
+import net.crytec.libs.protocol.tablist.implementation.EmptyTablist;
 
 public class UtilModule {
 
@@ -52,8 +53,8 @@ public class UtilModule {
     this.infoBarManager = new InfoBarManager(plugin, (entity) -> new InfoBar(entity, this.infoBarManager));
     this.protocolAPI = new ProtocolAPI(plugin);
     this.npcAPI = new NpcAPI(plugin);
-//    tabListManager = new TabListManager(plugin, (p) -> et);
-//    et = new EmptyTablist(tabListManager);
+    final EmptyTablist et = new EmptyTablist(this.tabListManager);
+    this.tabListManager = new TabListManager(plugin, (p) -> et);
   }
 
 }
