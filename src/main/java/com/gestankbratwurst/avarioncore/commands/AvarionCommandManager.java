@@ -46,8 +46,8 @@ public class AvarionCommandManager {
   public void registerConditions() {
 
     this.commandManager.getCommandConditions().addCondition("ItemInHand", context -> {
-      final BukkitCommandIssuer issuer = context.get
-          
+      final BukkitCommandIssuer issuer = context.getIssuer();
+
 
     });
 
