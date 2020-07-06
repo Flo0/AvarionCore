@@ -1,5 +1,6 @@
 package com.gestankbratwurst.avarioncore.commands;
 
+import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.PaperCommandManager;
 import com.gestankbratwurst.avarioncore.AvarionCore;
 import com.gestankbratwurst.avarioncore.commands.impl.EconomyCommand;
@@ -41,6 +42,17 @@ public class AvarionCommandManager {
 
   private final AvarionCore avarionCore;
   private final PaperCommandManager commandManager;
+
+  public void registerConditions() {
+
+    this.commandManager.getCommandConditions().addCondition("ItemInHand", context -> {
+      final BukkitCommandIssuer issuer = context.get
+          
+
+    });
+
+
+  }
 
   public void registerCompletions() {
 

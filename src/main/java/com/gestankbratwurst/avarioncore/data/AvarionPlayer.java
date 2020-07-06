@@ -101,9 +101,9 @@ public class AvarionPlayer {
   public void removeItem(final ItemStack item) {
     final Player player = this.getPlayer();
     if (player == null) {
-      this.inventory.remove(item);
+      this.inventory.removeItem(item);
     } else {
-      player.getInventory().remove(item);
+      player.getInventory().removeItem(item);
     }
   }
 
