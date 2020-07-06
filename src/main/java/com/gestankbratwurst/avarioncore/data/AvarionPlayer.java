@@ -98,6 +98,40 @@ public class AvarionPlayer {
     }
   }
 
+  public void removeItem(final ItemStack item) {
+    final Player player = this.getPlayer();
+    if (player == null) {
+      this.inventory.remove(item);
+    } else {
+      player.getInventory().remove(item);
+    }
+  }
+
+  public void removeItem(final ItemStack item, final int finalAmount) {
+    final int maxStackSize = item.getMaxStackSize();
+    final int fullStacks = finalAmount / maxStackSize;
+    final int left = finalAmount % maxStackSize;
+
+    final ItemStack stack = new ItemStack(item.clone());
+    for (int i = 0; i < fullStacks; i++) {
+      this.removeItem(stack);
+    }
+
+    if (left > 0) {
+      stack.setAmount(left);
+      this.removeItem(stack);
+    }
+  }
+
+  public boolean hasItem(final ItemStack item) {
+    final Player player = this.getPlayer();
+    if (player == null) {
+      return this.inventory.contains(item);
+    } else {
+      return player.getInventory().contains(item);
+    }
+  }
+
   public void giveItems(final ItemStack item, final int finalAmount, final boolean dropOnFull) {
     final int maxStackSize = item.getMaxStackSize();
     final int fullStacks = finalAmount / maxStackSize;

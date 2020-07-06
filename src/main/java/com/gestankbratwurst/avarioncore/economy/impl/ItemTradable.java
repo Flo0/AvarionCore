@@ -54,7 +54,7 @@ public class ItemTradable extends Tradable {
 
   @Override
   public void removeFrom(final AvarionPlayer avarionPlayer, final int amount) {
-
+    avarionPlayer.removeItem(this.tradeItem, amount);
   }
 
   @Override
