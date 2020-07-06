@@ -80,9 +80,9 @@ public final class AvarionCore extends JavaPlugin {
     this.commandManager.registerCommands();
   }
 
-
   @Override
   public void onDisable() {
+
     this.protectionManager.flushData();
     this.avarionDataManager.flushData();
     UtilBlock.terminate(this);

@@ -1,6 +1,9 @@
 package com.gestankbratwurst.avarioncore.economy.abstraction;
 
+import com.gestankbratwurst.avarioncore.economy.impl.TradableType;
+import com.google.gson.JsonObject;
 import lombok.Getter;
+import lombok.Setter;
 
 /*******************************************************
  * Copyright (C) Gestankbratwurst suotokka@gmail.com
@@ -13,14 +16,15 @@ import lombok.Getter;
  */
 public abstract class Tradable implements RepresentedObtainable, Buyable, Sellable {
 
-  public Tradable(final boolean buyable, final boolean sellable) {
-    this.buyable = buyable;
-    this.sellable = sellable;
-  }
-
   @Getter
+  @Setter
   protected boolean buyable;
   @Getter
+  @Setter
   protected boolean sellable;
+
+  public abstract TradableType getType();
+
+  public abstract JsonObject getAsJson();
 
 }

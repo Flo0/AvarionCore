@@ -2,11 +2,15 @@ package com.gestankbratwurst.avarioncore.util.common;
 
 import com.gestankbratwurst.avarioncore.resourcepack.skins.Model;
 import com.gestankbratwurst.avarioncore.util.nbtapi.NBTItem;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import net.minecraft.server.v1_16_R1.MojangsonParser;
+import net.minecraft.server.v1_16_R1.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.output.ByteArrayOutputStream;
+import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
@@ -62,6 +66,27 @@ public class UtilItem implements Listener {
       throw new IllegalStateException("Unable to save item stacks.", e);
     }
   }
+
+  public static String serialize(final ItemStack itemStack) {
+    final NBTTagCompound tag = new NBTTagCompound();
+    CraftItemStack.asNMSCopy(itemStack).save(tag);
+    return tag.toString();
+  }
+
+  public static ItemStack deserializeItemStack(final String string) {
+    if (string == null || string.equals("empty")) {
+      return null;
+    }
+    try {
+      final NBTTagCompound comp = MojangsonParser.parse(string);
+      final net.minecraft.server.v1_16_R1.ItemStack cis = net.minecraft.server.v1_16_R1.ItemStack.a(comp);
+      return CraftItemStack.asBukkitCopy(cis);
+    } catch (final CommandSyntaxException ex) {
+      ex.printStackTrace();
+    }
+    return null;
+  }
+
 
   public static ItemStack[] deserialize(final String data) {
     try {

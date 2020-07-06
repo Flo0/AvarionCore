@@ -1,6 +1,6 @@
 package com.gestankbratwurst.avarioncore.economy.abstraction;
 
-import org.bukkit.entity.Player;
+import com.gestankbratwurst.avarioncore.data.AvarionPlayer;
 import org.bukkit.inventory.ItemStack;
 
 /*******************************************************
@@ -14,6 +14,6 @@ import org.bukkit.inventory.ItemStack;
  */
 public interface RepresentedObtainable extends Obtainable {
 
-  ItemStack getRepresentation(Player player);
+  ItemStack getRepresentation(AvarionPlayer player);
 
 }

@@ -36,6 +36,7 @@ public class EconomyCommand extends BaseCommand {
 
   @Default
   public void onDefault(final Player player) {
+
     final EconomyAccount ea = Objects.requireNonNull(AvarionCore.getInstance().
         getAvarionDataManager()
         .getOnlineData(player.getUniqueId()))

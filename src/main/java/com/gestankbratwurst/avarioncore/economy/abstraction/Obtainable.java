@@ -1,7 +1,6 @@
 package com.gestankbratwurst.avarioncore.economy.abstraction;
 
 import com.gestankbratwurst.avarioncore.data.AvarionPlayer;
-import com.google.gson.JsonObject;
 
 /*******************************************************
  * Copyright (C) Gestankbratwurst suotokka@gmail.com
@@ -14,8 +13,8 @@ import com.google.gson.JsonObject;
  */
 public interface Obtainable {
 
-  void giveTo(AvarionPlayer avarionPlayer);
-  JsonObject getAsJson();
-  void loadFromJson(JsonObject jsonObject);
+  void removeFrom(AvarionPlayer avarionPlayer, int amount);
+
+  void giveTo(AvarionPlayer avarionPlayer, int amount);
 
 }

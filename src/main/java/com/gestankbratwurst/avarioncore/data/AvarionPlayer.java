@@ -16,8 +16,10 @@ import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Nullable;
 
 /*******************************************************
@@ -38,6 +40,7 @@ public class AvarionPlayer {
     this.friendAccount = new FriendAccount(this);
     this.messages = new ArrayList<>();
     this.itemQueue = new ArrayDeque<>();
+    this.inventory = (PlayerInventory) Bukkit.createInventory(null, InventoryType.PLAYER);
   }
 
   public AvarionPlayer(final JsonObject jsonObject) {
@@ -53,6 +56,8 @@ public class AvarionPlayer {
     }
     final ItemStack[] items = UtilItem.deserialize(jsonObject.get("ItemQueue").getAsString());
     this.itemQueue.addAll(Arrays.asList(items));
+    this.inventory = (PlayerInventory) Bukkit.createInventory(null, InventoryType.PLAYER);
+    this.inventory.setContents(UtilItem.deserialize(jsonObject.get("Inventory").getAsString()));
   }
 
   @Getter
@@ -67,6 +72,7 @@ public class AvarionPlayer {
   private String lastSeenName = "NONE";
   private final List<Msg.Pack> messages;
   private final ArrayDeque<ItemStack> itemQueue;
+  private final PlayerInventory inventory;
 
 
   public void openFriendGUI() {
@@ -88,7 +94,23 @@ public class AvarionPlayer {
         }
       });
     } else {
-      this.queueItem(item);
+      this.inventory.addItem(item).values().forEach(this::queueItem);
+    }
+  }
+
+  public void giveItems(final ItemStack item, final int finalAmount, final boolean dropOnFull) {
+    final int maxStackSize = item.getMaxStackSize();
+    final int fullStacks = finalAmount / maxStackSize;
+    final int left = finalAmount % maxStackSize;
+
+    final ItemStack stack = new ItemStack(item.clone());
+    for (int i = 0; i < fullStacks; i++) {
+      this.giveItem(stack.clone(), dropOnFull);
+    }
+
+    if (left > 0) {
+      stack.setAmount(left);
+      this.giveItem(stack.clone(), dropOnFull);
     }
   }
 
@@ -99,6 +121,7 @@ public class AvarionPlayer {
     }
     this.messages.clear();
     this.lastSeenName = player.getName();
+    player.getInventory().setContents(this.inventory.getContents());
     if (!this.itemQueue.isEmpty()) {
       final int amount = this.itemQueue.size();
       this.sendMessage("Items", "Du hast " + Msg.elem("" + amount) + " neue Items erhalten.");
@@ -135,6 +158,7 @@ public class AvarionPlayer {
     json.add("FriendAccount", this.friendAccount.getAsJson());
     json.addProperty("LastSeenName", this.lastSeenName);
     json.addProperty("ItemQueue", UtilItem.serialize(this.itemQueue.toArray(new ItemStack[0])));
+    json.addProperty("Inventory", UtilItem.serialize(this.inventory.getContents()));
 
     final JsonArray messageArray = new JsonArray();
 
