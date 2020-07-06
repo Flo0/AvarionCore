@@ -39,7 +39,7 @@ public class AvarionPlayer {
     this.friendAccount = new FriendAccount(this);
     this.messages = new ArrayList<>();
     this.itemQueue = new ArrayDeque<>();
-    this.inventory = Bukkit.createInventory(null, 5);
+    this.inventory = Bukkit.createInventory(null, 5 * 9);
   }
 
   public AvarionPlayer(final JsonObject jsonObject) {
@@ -55,7 +55,7 @@ public class AvarionPlayer {
     }
     final ItemStack[] items = UtilItem.deserialize(jsonObject.get("ItemQueue").getAsString());
     this.itemQueue.addAll(Arrays.asList(items));
-    this.inventory = Bukkit.createInventory(null, 5);
+    this.inventory = Bukkit.createInventory(null, 5 * 9);
     this.inventory.setContents(UtilItem.deserialize(jsonObject.get("Inventory").getAsString()));
   }
 
