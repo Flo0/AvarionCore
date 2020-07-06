@@ -34,6 +34,7 @@ public class GiveItemCommand extends BaseCommand {
       Msg.error(sender, "Give", "Du musst ein item in der Hand halten.");
     }
 
+    Msg.error(sender, "Give", "Du hast das item versendet.");
     target.thenAccept(avPlayer -> avPlayer.giveItem(item, false));
   }
 

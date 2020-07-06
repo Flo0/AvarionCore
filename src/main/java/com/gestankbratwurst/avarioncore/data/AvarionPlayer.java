@@ -17,6 +17,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -111,6 +112,11 @@ public class AvarionPlayer {
       stack.setAmount(left);
       this.giveItem(stack.clone(), dropOnFull);
     }
+  }
+
+  public void onQuit(final PlayerQuitEvent event) {
+    final Player player = event.getPlayer();
+    this.inventory.setContents(player.getInventory().getContents());
   }
 
   public void onLogin(final PlayerJoinEvent event) {

@@ -67,7 +67,6 @@ public class MongoIO implements AvarionIO {
 
   @Override
   public void savePlayerData(final UUID playerID, final JsonObject jsonData) {
-    System.out.println("SAVING PLAYER: " + jsonData.toString());
     this.playerCollection.findOneAndReplace(new Document("PlayerID", playerID.toString()), Document.parse(this.gson.toJson(jsonData)));
   }
 

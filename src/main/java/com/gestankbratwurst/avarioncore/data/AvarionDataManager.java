@@ -58,7 +58,6 @@ public class AvarionDataManager implements Listener, AsyncCacheLoader<UUID, Avar
   }
 
   public void flushData() {
-    System.out.println("Cached: " + this.offlinePlayerCache.synchronous().estimatedSize());
     this.offlinePlayerCache.synchronous().asMap().values().forEach(this.avarionIO::savePlayerAsync);
   }
 
@@ -115,7 +114,9 @@ public class AvarionDataManager implements Listener, AsyncCacheLoader<UUID, Avar
   public void onQuit(final PlayerQuitEvent event) {
     final UUID playerID = event.getPlayer().getUniqueId();
     this.offlinePlayerCache.get(playerID);
-    this.avarionIO.savePlayerAsync(this.onlinePlayerMap.remove(playerID));
+    final AvarionPlayer avPlayer = this.onlinePlayerMap.remove(playerID);
+    avPlayer.onQuit(event);
+    this.avarionIO.savePlayerAsync(avPlayer);
   }
 
 }
