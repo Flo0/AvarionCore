@@ -25,17 +25,16 @@ import org.bukkit.inventory.ItemStack;
 public class GiveItemCommand extends BaseCommand {
 
   @Default
-  @CommandCompletion("@AsyncAvarionPlayer")
+  @CommandCompletion("@AvarionPlayerAsync")
   public void onGive(final Player sender, final FutureAvarionPlayer target) {
 
-    final ItemStack item = sender.getActiveItem();
+    final ItemStack item = sender.getInventory().getItemInMainHand();
 
-    if (item == null || item.getType() == Material.AIR) {
+    if (item.getType() == Material.AIR) {
       Msg.error(sender, "Give", "Du musst ein item in der Hand halten.");
     }
 
-    target.thenAccept(avPlayer -> avPlayer.giveItem(item, true));
-    
+    target.thenAccept(avPlayer -> avPlayer.giveItem(item, false));
   }
 
 }
