@@ -16,10 +16,9 @@ import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Nullable;
 
 /*******************************************************
@@ -40,7 +39,7 @@ public class AvarionPlayer {
     this.friendAccount = new FriendAccount(this);
     this.messages = new ArrayList<>();
     this.itemQueue = new ArrayDeque<>();
-    this.inventory = (PlayerInventory) Bukkit.createInventory(null, InventoryType.PLAYER);
+    this.inventory = Bukkit.createInventory(null, 5);
   }
 
   public AvarionPlayer(final JsonObject jsonObject) {
@@ -56,7 +55,7 @@ public class AvarionPlayer {
     }
     final ItemStack[] items = UtilItem.deserialize(jsonObject.get("ItemQueue").getAsString());
     this.itemQueue.addAll(Arrays.asList(items));
-    this.inventory = (PlayerInventory) Bukkit.createInventory(null, InventoryType.PLAYER);
+    this.inventory = Bukkit.createInventory(null, 5);
     this.inventory.setContents(UtilItem.deserialize(jsonObject.get("Inventory").getAsString()));
   }
 
@@ -72,7 +71,7 @@ public class AvarionPlayer {
   private String lastSeenName = "NONE";
   private final List<Msg.Pack> messages;
   private final ArrayDeque<ItemStack> itemQueue;
-  private final PlayerInventory inventory;
+  private final Inventory inventory;
 
 
   public void openFriendGUI() {
