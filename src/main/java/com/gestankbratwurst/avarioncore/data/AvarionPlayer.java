@@ -120,7 +120,7 @@ public class AvarionPlayer {
     }
     this.messages.clear();
     this.lastSeenName = player.getName();
-    player.getInventory().setContents(this.inventory.getContents());
+    player.getInventory().setContents(Arrays.copyOf(this.inventory.getContents(), 40));
     if (!this.itemQueue.isEmpty()) {
       final int amount = this.itemQueue.size();
       this.sendMessage("Items", "Du hast " + Msg.elem("" + amount) + " neue Items erhalten.");
