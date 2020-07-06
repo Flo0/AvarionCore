@@ -5,6 +5,7 @@ import com.gestankbratwurst.avarioncore.AvarionCore;
 import com.gestankbratwurst.avarioncore.commands.impl.EconomyCommand;
 import com.gestankbratwurst.avarioncore.commands.impl.FriendCommand;
 import com.gestankbratwurst.avarioncore.commands.impl.ProtectionCommand;
+import com.gestankbratwurst.avarioncore.commands.impl.staff.GiveItemCommand;
 import com.gestankbratwurst.avarioncore.commands.impl.staff.SpeedCommand;
 import com.gestankbratwurst.avarioncore.data.FutureAvarionPlayer;
 import com.gestankbratwurst.avarioncore.protection.ProtectionRule;
@@ -101,6 +102,7 @@ public class AvarionCommandManager {
     this.commandManager.registerCommand(new ModelItemCommand());
 
     this.commandManager.registerCommand(new SpeedCommand());
+    this.commandManager.registerCommand(new GiveItemCommand());
 
   }
 
