@@ -23,7 +23,6 @@ public class AdminShopManager {
   public AdminShopManager(final AvarionCore avarionCore) {
     this.shopMap = new Object2ObjectOpenHashMap<>();
     this.avarionIO = avarionCore.getAvarionIO();
-    this.loadShops();
   }
 
   private final Map<String, AdminShop> shopMap;
@@ -65,7 +64,7 @@ public class AdminShopManager {
     this.avarionIO.saveAdminShops(jsonObject);
   }
 
-  private void loadShops() {
+  public void loadShops() {
     final JsonObject jsonObject = this.avarionIO.loadAdminShops();
     if (jsonObject != null) {
       for (final JsonElement element : jsonObject.get("Shops").getAsJsonArray()) {
