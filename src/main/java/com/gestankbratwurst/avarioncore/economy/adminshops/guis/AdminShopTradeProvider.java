@@ -51,6 +51,7 @@ public class AdminShopTradeProvider implements InventoryProvider {
 
   @Override
   public void onBottomClick(final InventoryClickEvent event) {
+    System.out.println("Click?");
     final AvarionPlayer avarionPlayer = this.avarionDataManager.getOnlineData(event.getWhoClicked().getUniqueId());
     final int slot = event.getSlot();
     final Inventory inv = event.getClickedInventory();

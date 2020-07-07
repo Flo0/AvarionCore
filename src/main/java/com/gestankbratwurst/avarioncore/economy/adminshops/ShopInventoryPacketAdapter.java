@@ -82,6 +82,7 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
           packetItemBuilder.clearLore();
           packetItemBuilder.name("§cDieses Item kann hier nicht verkauft werden.");
         }
+        wrapper.setSlotData(packetItemBuilder.build());
       }
 
       // Handle Item
