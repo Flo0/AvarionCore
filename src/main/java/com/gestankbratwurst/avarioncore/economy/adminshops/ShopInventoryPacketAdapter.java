@@ -84,10 +84,6 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
         }
         wrapper.setSlotData(packetItemBuilder.build());
       }
-
-      // Handle Item
-
-      wrapper.setSlotData(item);
       event.setPacket(wrapper.getHandle());
     }
   }
