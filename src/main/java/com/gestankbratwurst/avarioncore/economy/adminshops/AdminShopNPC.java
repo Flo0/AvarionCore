@@ -4,7 +4,7 @@ import com.gestankbratwurst.avarioncore.AvarionCore;
 import com.gestankbratwurst.avarioncore.util.Msg;
 import com.gestankbratwurst.avarioncore.util.common.UtilLoc;
 import com.google.gson.JsonObject;
-import java.util.UUID;
+import lombok.Getter;
 import net.crytec.libs.protocol.npc.types.NPCVillager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -27,21 +27,19 @@ public class AdminShopNPC extends NPCVillager {
     super(location);
     super.setDisplayname(displayName);
     this.adminShop = adminShop;
-    this.npcID = this.getFakeEntity().getUniqueID();
     this.setProfession(Profession.NONE);
     this.setType(Type.PLAINS);
   }
 
   public AdminShopNPC(final JsonObject jsonObject) {
     super(UtilLoc.locFromString(jsonObject.get("Location").getAsString()));
-    this.npcID = UUID.fromString(jsonObject.get("UUID").getAsString());
     this.setProfession(Villager.Profession.valueOf(jsonObject.get("Profession").getAsString()));
     this.setType(Villager.Type.valueOf(jsonObject.get("Type").getAsString()));
     final AdminShopManager adminShopManager = AvarionCore.getInstance().getEconomyManager().getAdminShopManager();
     this.adminShop = adminShopManager.getAdminShop(jsonObject.get("AdminShop").getAsString());
   }
 
-  private final UUID npcID;
+  @Getter
   private final AdminShop adminShop;
   private Villager.Profession profession;
   private Villager.Type type;
@@ -73,7 +71,6 @@ public class AdminShopNPC extends NPCVillager {
       return null;
     }
     jsonObject.addProperty("Location", UtilLoc.locToString(this.getLocation()));
-    jsonObject.addProperty("UUID", this.npcID.toString());
     jsonObject.addProperty("Type", this.type.toString());
     jsonObject.addProperty("Profession", this.profession.toString());
     jsonObject.addProperty("AdminShop", this.adminShop.getShopTitle());

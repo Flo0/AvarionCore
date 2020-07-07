@@ -10,6 +10,7 @@ import com.gestankbratwurst.avarioncore.economy.adminshops.AdminShopManager;
 import com.gestankbratwurst.avarioncore.economy.adminshops.ShopType;
 import com.gestankbratwurst.avarioncore.util.Msg;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /*******************************************************
@@ -32,6 +33,22 @@ public class AdminShopCommand extends BaseCommand {
   @CommandCompletion("@ShopType @ShopName")
   public void onCreate(final Player player, final ShopType shopType, final String name) {
     this.adminShopManager.createShop(name, shopType);
+    Msg.send(player, "Shops", "Shop wurde erstellt.");
+  }
+
+  @Subcommand("createnpc")
+  @CommandCompletion("@ShopName <NPCName>")
+  public void onCreateNpc(final Player player, final String shopName, final String npcName) {
+    final AdminShop adminShop = this.adminShopManager.getAdminShop(shopName);
+    if (adminShop == null) {
+      Msg.error(player, "Shops", "Dieser Adminshop existiert nicht.");
+      return;
+    }
+
+    final Location location = player.getLocation();
+    location.setDirection(player.getEyeLocation().getDirection());
+    this.adminShopManager.createNPC(location, npcName, adminShop);
+    Msg.send(player, "Shops", "NPC wurde erstellt und verlinkt.");
   }
 
   @Subcommand("delete")
