@@ -84,7 +84,7 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
 
       for (int i = 0; i < itemData.size(); i++) {
         final ItemStack slotItem = itemData.get(i);
-        itemData.set(i, new ItemStack(Material.STICK));
+        
         if (slotItem == null || slotItem.getType() == Material.AIR) {
           continue;
         }
