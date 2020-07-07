@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import lombok.Getter;
 import net.crytec.inventoryapi.SmartInventory;
 import org.bukkit.entity.Player;
@@ -30,8 +31,11 @@ public class AdminShop {
     this(jsonObject.get("ShopTitle").getAsString(), ShopType.valueOf(jsonObject.get("ShopType").getAsString()));
     final JsonObject tradablesObject = jsonObject.get("Tradables").getAsJsonObject();
     for (final Entry<String, JsonElement> entry : tradablesObject.entrySet()) {
-      final Tradable tradable = TradableType.valueOf(entry.getKey()).getSupplier().apply(entry.getValue().getAsJsonObject());
-      this.tradables.add(tradable);
+      final Function<JsonObject, Tradable> supplier = TradableType.valueOf(entry.getKey()).getSupplier();
+      final JsonArray tradableArray = entry.getValue().getAsJsonArray();
+      for (final JsonElement tradableElement : tradableArray) {
+        this.tradables.add(supplier.apply(tradableElement.getAsJsonObject()));
+      }
     }
   }
 
