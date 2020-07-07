@@ -6,6 +6,7 @@ import com.gestankbratwurst.avarioncore.util.common.UtilLoc;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import net.crytec.libs.protocol.npc.types.NPCVillager;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -25,10 +26,12 @@ public class AdminShopNPC extends NPCVillager {
 
   public AdminShopNPC(final Location location, final String displayName, final AdminShop adminShop) {
     super(location);
+    this.displayName = ChatColor.translateAlternateColorCodes('&', displayName);
     super.setDisplayname(displayName);
     this.adminShop = adminShop;
     this.setProfession(Profession.NONE);
     this.setType(Type.PLAINS);
+
   }
 
   public AdminShopNPC(final JsonObject jsonObject) {
@@ -37,10 +40,13 @@ public class AdminShopNPC extends NPCVillager {
     this.setType(Villager.Type.valueOf(jsonObject.get("Type").getAsString()));
     final AdminShopManager adminShopManager = AvarionCore.getInstance().getEconomyManager().getAdminShopManager();
     this.adminShop = adminShopManager.getAdminShop(jsonObject.get("AdminShop").getAsString());
+    this.displayName = jsonObject.get("DisplayName").getAsString();
+    super.setDisplayname(this.displayName);
   }
 
   @Getter
   private final AdminShop adminShop;
+  private final String displayName;
   private Villager.Profession profession;
   private Villager.Type type;
 
@@ -74,6 +80,7 @@ public class AdminShopNPC extends NPCVillager {
     jsonObject.addProperty("Type", this.type.toString());
     jsonObject.addProperty("Profession", this.profession.toString());
     jsonObject.addProperty("AdminShop", this.adminShop.getShopTitle());
+    jsonObject.addProperty("DisplayName", this.displayName);
 
     return jsonObject;
   }
