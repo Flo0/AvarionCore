@@ -43,9 +43,12 @@ public class MongoIO implements AvarionIO {
     final MongoDatabase database = mongoClient.getDatabase("avarion_data");
     this.playerCollection = database.getCollection("players");
     this.worldCollection = database.getCollection("worlds");
+    this.adminShopsCollection = database.getCollection("admin_shops");
+
     this.playerCollection.createIndex(Indexes.hashed("PlayerID"));
     this.playerCollection.createIndex(Indexes.hashed("LastSeenName"));
     this.worldCollection.createIndex(Indexes.hashed("WorldID"));
+
     this.gson = new GsonBuilder().disableHtmlEscaping().create();
     this.playerNameCache = new HashSet<>();
   }
@@ -53,6 +56,7 @@ public class MongoIO implements AvarionIO {
   private final Gson gson;
   private final MongoCollection<Document> playerCollection;
   private final MongoCollection<Document> worldCollection;
+  private final MongoCollection<Document> adminShopsCollection;
   private final Set<String> playerNameCache;
 
   @Override
@@ -85,6 +89,24 @@ public class MongoIO implements AvarionIO {
       this.worldCollection.insertOne(Document.parse(this.gson.toJson(jsonData)));
     } else {
       this.worldCollection.findOneAndReplace(new Document("WorldID", worldID.toString()), Document.parse(this.gson.toJson(jsonData)));
+    }
+  }
+
+  @Override
+  public @Nullable JsonObject loadAdminShops() {
+    final Document data = this.adminShopsCollection.find(new Document()).first();
+    if (data == null) {
+      return null;
+    }
+    return this.gson.fromJson(data.toJson(), JsonObject.class);
+  }
+
+  @Override
+  public void saveAdminShops(final JsonObject jsonData) {
+    if (this.adminShopsCollection.find(new Document()).first() == null) {
+      this.adminShopsCollection.insertOne(Document.parse(this.gson.toJson(jsonData)));
+    } else {
+      this.adminShopsCollection.findOneAndReplace(new Document(), Document.parse(this.gson.toJson(jsonData)));
     }
   }
 

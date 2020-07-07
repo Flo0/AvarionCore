@@ -4,10 +4,10 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Conditions;
 import co.aikar.commands.annotation.Subcommand;
 import com.gestankbratwurst.avarioncore.data.FutureAvarionPlayer;
 import com.gestankbratwurst.avarioncore.util.Msg;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,13 +26,10 @@ public class ItemsCommand extends BaseCommand {
 
   @Subcommand("give")
   @CommandCompletion("@AvarionPlayerAsync")
+  @Conditions("ItemInHand")
   public void onGive(final Player sender, final FutureAvarionPlayer target) {
 
     final ItemStack item = sender.getInventory().getItemInMainHand();
-
-    if (item.getType() == Material.AIR) {
-      Msg.error(sender, "Items", "Du musst ein item in der Hand halten.");
-    }
 
     Msg.error(sender, "Items", "Du hast das item versendet.");
     target.thenAccept(avPlayer -> avPlayer.giveItem(item, false));
@@ -40,13 +37,10 @@ public class ItemsCommand extends BaseCommand {
 
   @Subcommand("has")
   @CommandCompletion("@AvarionPlayerAsync")
+  @Conditions("ItemInHand")
   public void onHas(final Player sender, final FutureAvarionPlayer target) {
 
     final ItemStack item = sender.getInventory().getItemInMainHand();
-
-    if (item.getType() == Material.AIR) {
-      Msg.error(sender, "Items", "Du musst ein item in der Hand halten.");
-    }
 
     target.thenAccept(avPlayer -> {
       if (avPlayer.hasItem(item)) {
@@ -59,15 +53,12 @@ public class ItemsCommand extends BaseCommand {
 
   @Subcommand("remove")
   @CommandCompletion("@AvarionPlayerAsync")
+  @Conditions("ItemInHand")
   public void onRemove(final Player sender, final FutureAvarionPlayer target) {
 
     final ItemStack item = sender.getInventory().getItemInMainHand();
 
-    if (item.getType() == Material.AIR) {
-      Msg.error(sender, "Items", "Du musst ein item in der Hand halten.");
-    }
-
-    Msg.error(sender, "Items", "Items wurden entfernt.");
+    Msg.send(sender, "Items", "Items wurden entfernt.");
     target.thenAccept(avPlayer -> avPlayer.removeItem(item));
   }
 

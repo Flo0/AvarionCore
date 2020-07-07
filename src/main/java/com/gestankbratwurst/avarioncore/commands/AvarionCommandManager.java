@@ -1,14 +1,17 @@
 package com.gestankbratwurst.avarioncore.commands;
 
 import co.aikar.commands.BukkitCommandIssuer;
+import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import com.gestankbratwurst.avarioncore.AvarionCore;
+import com.gestankbratwurst.avarioncore.commands.impl.AdminShopCommand;
 import com.gestankbratwurst.avarioncore.commands.impl.EconomyCommand;
 import com.gestankbratwurst.avarioncore.commands.impl.FriendCommand;
 import com.gestankbratwurst.avarioncore.commands.impl.ProtectionCommand;
 import com.gestankbratwurst.avarioncore.commands.impl.staff.ItemsCommand;
 import com.gestankbratwurst.avarioncore.commands.impl.staff.SpeedCommand;
 import com.gestankbratwurst.avarioncore.data.FutureAvarionPlayer;
+import com.gestankbratwurst.avarioncore.economy.adminshops.ShopType;
 import com.gestankbratwurst.avarioncore.protection.ProtectionRule;
 import com.gestankbratwurst.avarioncore.protection.RuleState;
 import com.gestankbratwurst.avarioncore.resourcepack.skins.Model;
@@ -21,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import net.minecraft.server.v1_16_R1.SoundCategory;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -47,7 +51,13 @@ public class AvarionCommandManager {
 
     this.commandManager.getCommandConditions().addCondition("ItemInHand", context -> {
       final BukkitCommandIssuer issuer = context.getIssuer();
+      if (!issuer.isPlayer()) {
+        throw new ConditionFailedException("Cannot be executed by console");
+      }
 
+      if (issuer.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR) {
+        throw new ConditionFailedException("Du musst ein Item in der Hand halten.");
+      }
 
     });
 
@@ -77,6 +87,12 @@ public class AvarionCommandManager {
 
     this.commandManager.getCommandCompletions()
         .registerAsyncCompletion("AvarionPlayerAsync", c -> this.avarionCore.getAvarionIO().getAvarionPlayerNames(c));
+
+    this.commandManager.getCommandCompletions().registerStaticCompletion("ShopType",
+        ImmutableList.copyOf(Arrays.stream(ShopType.values()).map(Enum::toString).collect(Collectors.toList())));
+
+    this.commandManager.getCommandCompletions()
+        .registerCompletion("ShopName", (c) -> this.avarionCore.getAdminShopManager().getShopNames());
 
   }
 
@@ -112,10 +128,10 @@ public class AvarionCommandManager {
     this.commandManager.registerCommand(new FriendCommand(this.avarionCore));
     this.commandManager.registerCommand(new EconomyCommand(this.avarionCore.getMoneyItemHandler()));
     this.commandManager.registerCommand(new ModelItemCommand());
+    this.commandManager.registerCommand(new AdminShopCommand(this.avarionCore.getAdminShopManager()));
 
     this.commandManager.registerCommand(new SpeedCommand());
     this.commandManager.registerCommand(new ItemsCommand());
-
   }
 
 }

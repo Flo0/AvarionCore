@@ -31,20 +31,21 @@ import org.jetbrains.annotations.Nullable;
 public class FlatFileIO implements AvarionIO {
 
   public FlatFileIO(final AvarionCore plugin) {
-    final File mainFolder = plugin.getDataFolder();
-    if (!mainFolder.exists()) {
-      mainFolder.mkdirs();
+    this.pluginFolder = plugin.getDataFolder();
+    if (!this.pluginFolder.exists()) {
+      this.pluginFolder.mkdirs();
     }
-    this.playerFolder = new File(mainFolder + File.separator + "playerdata");
+    this.playerFolder = new File(this.pluginFolder + File.separator + "playerdata");
     if (!this.playerFolder.exists()) {
       this.playerFolder.mkdirs();
     }
-    this.worldFolder = new File(mainFolder + File.separator + "protectiondata");
+    this.worldFolder = new File(this.pluginFolder + File.separator + "protectiondata");
     if (!this.worldFolder.exists()) {
       this.worldFolder.mkdirs();
     }
   }
 
+  private final File pluginFolder;
   private final File playerFolder;
   private final File worldFolder;
   private final Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -100,6 +101,29 @@ public class FlatFileIO implements AvarionIO {
   public void saveWorldData(final UUID worldID, final JsonObject jsonData) {
     try {
       Files.writeString(this.getWorldPath(worldID), this.gson.toJson(jsonData));
+    } catch (final IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Override
+  public @Nullable JsonObject loadAdminShops() {
+    final Path adminShopPath = new File(this.pluginFolder, "adminshops.json").toPath();
+    if (Files.exists(adminShopPath)) {
+      try {
+        return this.gson.fromJson(Files.readString(adminShopPath), JsonObject.class);
+      } catch (final IOException e) {
+        e.printStackTrace();
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public void saveAdminShops(final JsonObject jsonData) {
+    final Path adminShopPath = new File(this.pluginFolder, "adminshops.json").toPath();
+    try {
+      Files.writeString(adminShopPath, this.gson.toJson(jsonData));
     } catch (final IOException e) {
       e.printStackTrace();
     }

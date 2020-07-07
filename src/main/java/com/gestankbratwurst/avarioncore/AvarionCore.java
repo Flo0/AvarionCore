@@ -7,6 +7,7 @@ import com.gestankbratwurst.avarioncore.data.AvarionDataManager;
 import com.gestankbratwurst.avarioncore.data.AvarionIO;
 import com.gestankbratwurst.avarioncore.data.impl.MongoIO;
 import com.gestankbratwurst.avarioncore.economy.MoneyItemHandler;
+import com.gestankbratwurst.avarioncore.economy.adminshops.AdminShopManager;
 import com.gestankbratwurst.avarioncore.protection.ProtectionManager;
 import com.gestankbratwurst.avarioncore.resourcepack.ResourcepackModule;
 import com.gestankbratwurst.avarioncore.tasks.TaskManager;
@@ -48,6 +49,8 @@ public final class AvarionCore extends JavaPlugin {
   private WebManager webManager;
   @Getter
   private AvarionCommandManager commandManager;
+  @Getter
+  private AdminShopManager adminShopManager;
 
   @Override
   public void onEnable() {
@@ -70,6 +73,7 @@ public final class AvarionCore extends JavaPlugin {
     this.protectionManager = new ProtectionManager(this);
 
     this.moneyItemHandler = new MoneyItemHandler(this);
+    this.adminShopManager = new AdminShopManager(this);
 
     this.webManager = new WebManager(this);
 
@@ -85,6 +89,8 @@ public final class AvarionCore extends JavaPlugin {
 
     this.protectionManager.flushData();
     this.avarionDataManager.flushData();
+    this.adminShopManager.flushData();
+
     UtilBlock.terminate(this);
     this.resourcepackModule.disable(this);
   }

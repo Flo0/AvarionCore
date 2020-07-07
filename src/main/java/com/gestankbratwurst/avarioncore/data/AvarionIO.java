@@ -30,6 +30,11 @@ public interface AvarionIO {
 
   void saveWorldData(final UUID worldID, final JsonObject jsonData);
 
+  @Nullable
+  JsonObject loadAdminShops();
+
+  void saveAdminShops(JsonObject jsonData);
+
   default AvarionPlayer loadPlayer(final UUID playerID) {
     final JsonObject data = this.loadPlayerData(playerID);
     if (data == null) {
