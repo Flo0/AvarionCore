@@ -8,6 +8,7 @@ import com.gestankbratwurst.avarioncore.data.AvarionIO;
 import com.gestankbratwurst.avarioncore.data.impl.MongoIO;
 import com.gestankbratwurst.avarioncore.economy.MoneyItemHandler;
 import com.gestankbratwurst.avarioncore.economy.adminshops.AdminShopManager;
+import com.gestankbratwurst.avarioncore.economy.adminshops.ShopInventoryPacketAdapter;
 import com.gestankbratwurst.avarioncore.protection.ProtectionManager;
 import com.gestankbratwurst.avarioncore.resourcepack.ResourcepackModule;
 import com.gestankbratwurst.avarioncore.tasks.TaskManager;
@@ -62,6 +63,8 @@ public final class AvarionCore extends JavaPlugin {
     this.avarionIO = new MongoIO();
     this.taskManager = new TaskManager(this);
     this.protocolManager = ProtocolLibrary.getProtocolManager();
+
+    this.protocolManager.addPacketListener(new ShopInventoryPacketAdapter());
 
     this.utilModule = new UtilModule();
     this.utilModule.enable(this);
