@@ -61,8 +61,6 @@ public final class AvarionCore extends JavaPlugin {
     this.taskManager = new TaskManager(this);
     this.protocolManager = ProtocolLibrary.getProtocolManager();
 
-    this.protocolManager.addPacketListener(new ShopInventoryPacketAdapter(this));
-
     this.utilModule = new UtilModule();
     this.utilModule.enable(this);
 
@@ -81,6 +79,8 @@ public final class AvarionCore extends JavaPlugin {
     this.commandManager.registerCompletions();
     this.commandManager.registerContextResolver();
     this.commandManager.registerCommands();
+
+    this.protocolManager.addPacketListener(new ShopInventoryPacketAdapter(this));
   }
 
   @Override
