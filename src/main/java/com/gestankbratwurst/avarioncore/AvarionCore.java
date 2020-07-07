@@ -6,8 +6,7 @@ import com.gestankbratwurst.avarioncore.commands.AvarionCommandManager;
 import com.gestankbratwurst.avarioncore.data.AvarionDataManager;
 import com.gestankbratwurst.avarioncore.data.AvarionIO;
 import com.gestankbratwurst.avarioncore.data.impl.MongoIO;
-import com.gestankbratwurst.avarioncore.economy.MoneyItemHandler;
-import com.gestankbratwurst.avarioncore.economy.adminshops.AdminShopManager;
+import com.gestankbratwurst.avarioncore.economy.EconomyManager;
 import com.gestankbratwurst.avarioncore.economy.adminshops.ShopInventoryPacketAdapter;
 import com.gestankbratwurst.avarioncore.protection.ProtectionManager;
 import com.gestankbratwurst.avarioncore.resourcepack.ResourcepackModule;
@@ -45,13 +44,11 @@ public final class AvarionCore extends JavaPlugin {
   @Getter
   private ProtectionManager protectionManager;
   @Getter
-  private MoneyItemHandler moneyItemHandler;
+  private EconomyManager economyManager;
   @Getter
   private WebManager webManager;
   @Getter
   private AvarionCommandManager commandManager;
-  @Getter
-  private AdminShopManager adminShopManager;
 
   @Override
   public void onEnable() {
@@ -64,7 +61,7 @@ public final class AvarionCore extends JavaPlugin {
     this.taskManager = new TaskManager(this);
     this.protocolManager = ProtocolLibrary.getProtocolManager();
 
-    this.protocolManager.addPacketListener(new ShopInventoryPacketAdapter());
+    this.protocolManager.addPacketListener(new ShopInventoryPacketAdapter(this));
 
     this.utilModule = new UtilModule();
     this.utilModule.enable(this);
@@ -75,8 +72,7 @@ public final class AvarionCore extends JavaPlugin {
     this.avarionDataManager = new AvarionDataManager(this);
     this.protectionManager = new ProtectionManager(this);
 
-    this.moneyItemHandler = new MoneyItemHandler(this);
-    this.adminShopManager = new AdminShopManager(this);
+    this.economyManager = new EconomyManager(this);
 
     this.webManager = new WebManager(this);
 
@@ -92,7 +88,7 @@ public final class AvarionCore extends JavaPlugin {
 
     this.protectionManager.flushData();
     this.avarionDataManager.flushData();
-    this.adminShopManager.flushData();
+    this.economyManager.getAdminShopManager().flushData();
 
     UtilBlock.terminate(this);
     this.resourcepackModule.disable(this);

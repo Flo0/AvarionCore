@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -19,7 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class ItemBuilder {
 
-  public static ItemBuilder fromModel(Model model) {
+  public static ItemBuilder fromModel(final Model model) {
     return new ItemBuilder(model.getItem());
   }
 
@@ -43,7 +44,15 @@ public class ItemBuilder {
   private int amount;
   private final List<String> loreLines;
 
-  public ItemBuilder amount(int amount) {
+  public void clearLore() {
+    this.editLore(List::clear);
+  }
+
+  public void editLore(final Consumer<List<String>> loreConsumer) {
+    loreConsumer.accept(this.loreLines);
+  }
+
+  public ItemBuilder amount(final int amount) {
     this.amount = amount;
     return this;
   }
@@ -73,8 +82,8 @@ public class ItemBuilder {
     return this;
   }
 
-  public ItemBuilder setEnchantable(boolean value) {
-    PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
+  public ItemBuilder setEnchantable(final boolean value) {
+    final PersistentDataContainer persistentDataContainer = this.itemMeta.getPersistentDataContainer();
     if (value) {
       if (persistentDataContainer.has(NameSpaceFactory.provide("ENCHANTBLOCK"), PersistentDataType.INTEGER)) {
         persistentDataContainer.remove(NameSpaceFactory.provide("ENCHANTBLOCK"));
@@ -85,8 +94,8 @@ public class ItemBuilder {
     return this;
   }
 
-  public ItemBuilder setAnvilReceiver(boolean value) {
-    PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
+  public ItemBuilder setAnvilReceiver(final boolean value) {
+    final PersistentDataContainer persistentDataContainer = this.itemMeta.getPersistentDataContainer();
     if (value) {
       if (persistentDataContainer.has(NameSpaceFactory.provide("BLOCKANVILRECEIVER"), PersistentDataType.INTEGER)) {
         persistentDataContainer.remove(NameSpaceFactory.provide("BLOCKANVILRECEIVER"));
@@ -97,8 +106,8 @@ public class ItemBuilder {
     return this;
   }
 
-  public ItemBuilder setAnvilProvider(boolean value) {
-    PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
+  public ItemBuilder setAnvilProvider(final boolean value) {
+    final PersistentDataContainer persistentDataContainer = this.itemMeta.getPersistentDataContainer();
     if (value) {
       if (persistentDataContainer.has(NameSpaceFactory.provide("BLOCKANVILPROVIDER"), PersistentDataType.INTEGER)) {
         persistentDataContainer.remove(NameSpaceFactory.provide("BLOCKANVILPROVIDER"));
@@ -134,8 +143,8 @@ public class ItemBuilder {
     return this;
   }
 
-  public <T, Z> ItemBuilder addPersistentData(String key, PersistentDataType<T, Z> type, Z value) {
-    PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
+  public <T, Z> ItemBuilder addPersistentData(final String key, final PersistentDataType<T, Z> type, final Z value) {
+    final PersistentDataContainer pdc = this.itemMeta.getPersistentDataContainer();
     pdc.set(NameSpaceFactory.provide(key), type, value);
     return this;
   }
@@ -146,13 +155,13 @@ public class ItemBuilder {
   }
 
   public ItemStack build() {
-    ItemStack item = new ItemStack(this.material);
+    final ItemStack item = new ItemStack(this.material);
     if (!this.loreLines.isEmpty()) {
       this.itemMeta.setLore(this.loreLines);
     }
     item.setItemMeta(this.itemMeta);
-    if (amount != 1) {
-      item.setAmount(amount);
+    if (this.amount != 1) {
+      item.setAmount(this.amount);
     }
     return item;
   }

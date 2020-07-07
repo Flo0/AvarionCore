@@ -25,7 +25,7 @@ public class AdminShopEditorProvider implements InventoryProvider {
 
   @Override
   public void init(final Player player, final InventoryContent content) {
-
+    
   }
 
   @Override

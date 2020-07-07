@@ -92,7 +92,7 @@ public class AvarionCommandManager {
         ImmutableList.copyOf(Arrays.stream(ShopType.values()).map(Enum::toString).collect(Collectors.toList())));
 
     this.commandManager.getCommandCompletions()
-        .registerCompletion("ShopName", (c) -> this.avarionCore.getAdminShopManager().getShopNames());
+        .registerCompletion("ShopName", (c) -> this.avarionCore.getEconomyManager().getAdminShopManager().getShopNames());
 
   }
 
@@ -126,9 +126,9 @@ public class AvarionCommandManager {
   public void registerCommands() {
     this.commandManager.registerCommand(new ProtectionCommand(this.avarionCore.getProtectionManager()));
     this.commandManager.registerCommand(new FriendCommand(this.avarionCore));
-    this.commandManager.registerCommand(new EconomyCommand(this.avarionCore.getMoneyItemHandler()));
+    this.commandManager.registerCommand(new EconomyCommand(this.avarionCore.getEconomyManager().getMoneyItemHandler()));
     this.commandManager.registerCommand(new ModelItemCommand());
-    this.commandManager.registerCommand(new AdminShopCommand(this.avarionCore.getAdminShopManager()));
+    this.commandManager.registerCommand(new AdminShopCommand(this.avarionCore.getEconomyManager().getAdminShopManager()));
 
     this.commandManager.registerCommand(new SpeedCommand());
     this.commandManager.registerCommand(new ItemsCommand());

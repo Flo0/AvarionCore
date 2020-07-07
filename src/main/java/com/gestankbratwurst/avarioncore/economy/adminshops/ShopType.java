@@ -1,5 +1,9 @@
 package com.gestankbratwurst.avarioncore.economy.adminshops;
 
+import java.util.function.Predicate;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.inventory.ItemStack;
+
 /*******************************************************
  * Copyright (C) Gestankbratwurst suotokka@gmail.com
  *
@@ -9,9 +13,16 @@ package com.gestankbratwurst.avarioncore.economy.adminshops;
  * permission of the owner.
  *
  */
+@RequiredArgsConstructor
 public enum ShopType {
 
-  SMITH(),
-  BAKER();
+  SMITH(item -> false),
+  BAKER(item -> false);
+
+  private final Predicate<ItemStack> tradabilityFilter;
+
+  public boolean isTradableHere(final ItemStack itemStack) {
+    return this.tradabilityFilter.test(itemStack);
+  }
 
 }

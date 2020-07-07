@@ -51,7 +51,7 @@ public class UtilPlayer implements Listener, Runnable {
   private final Object2FloatOpenHashMap<Player> attackCooldowns;
 
   private UtilPlayer() {
-    attackCooldowns = new Object2FloatOpenHashMap<>();
+    this.attackCooldowns = new Object2FloatOpenHashMap<>();
   }
 
   public static void init(final AvarionCore host) {
@@ -62,17 +62,17 @@ public class UtilPlayer implements Listener, Runnable {
   }
 
   @Nullable
-  public static Block getBlockLookingAt(Player player, double maxDistance, FluidCollisionMode collisionMode) {
-    Location eyeLoc = player.getEyeLocation();
-    Vector direction = eyeLoc.getDirection();
-    RayTraceResult traceResult = player.getWorld().rayTraceBlocks(eyeLoc, direction, maxDistance, collisionMode);
+  public static Block getBlockLookingAt(final Player player, final double maxDistance, final FluidCollisionMode collisionMode) {
+    final Location eyeLoc = player.getEyeLocation();
+    final Vector direction = eyeLoc.getDirection();
+    final RayTraceResult traceResult = player.getWorld().rayTraceBlocks(eyeLoc, direction, maxDistance, collisionMode);
     if (traceResult == null) {
       return null;
     }
     return traceResult.getHitBlock();
   }
 
-  public static Block getBlockLookingAt(Player player, double maxDistance) {
+  public static Block getBlockLookingAt(final Player player, final double maxDistance) {
     return getBlockLookingAt(player, maxDistance, FluidCollisionMode.NEVER);
   }
 
@@ -81,17 +81,17 @@ public class UtilPlayer implements Listener, Runnable {
     WAITING_PLAYERS.put(player, new WaitingPlayer(player, ticks, cancelOnDamage, afterwait, onCancel));
   }
 
-  public static ItemStack getHead(OfflinePlayer player) {
-    ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-    SkullMeta headMeta = (SkullMeta) head.getItemMeta();
+  public static ItemStack getHead(final OfflinePlayer player) {
+    final ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+    final SkullMeta headMeta = (SkullMeta) head.getItemMeta();
     headMeta.setOwningPlayer(player);
     head.setItemMeta(headMeta);
     return head;
   }
 
-  public static void teleport(Player player, int cdTicks, double particleRadius, Location destination) {
-    TeleportParticleThread warmup = new TeleportParticleThread(player, cdTicks, 1.5);
-    double secs = UtilMath.cut((double) cdTicks / 20D, 1);
+  public static void teleport(final Player player, final int cdTicks, final double particleRadius, final Location destination) {
+    final TeleportParticleThread warmup = new TeleportParticleThread(player, cdTicks, 1.5);
+    final double secs = UtilMath.cut((double) cdTicks / 20D, 1);
     player.sendMessage("§6Teleportiere in §e" + secs + "§6 Sekunden.");
     UtilPlayer.forceWait(player, cdTicks, true, p -> {
       player.sendMessage("§6Nicht bewegen.");
@@ -104,7 +104,7 @@ public class UtilPlayer implements Listener, Runnable {
     });
   }
 
-  public static void teleport(Player player, int cdTicks, Location destination) {
+  public static void teleport(final Player player, final int cdTicks, final Location destination) {
     teleport(player, cdTicks, 1.5, destination);
   }
 
@@ -126,7 +126,7 @@ public class UtilPlayer implements Listener, Runnable {
 
   @EventHandler
   public void onQuit(final PlayerQuitEvent event) {
-    attackCooldowns.removeFloat(event.getPlayer());
+    this.attackCooldowns.removeFloat(event.getPlayer());
     WAITING_PLAYERS.remove(event.getPlayer());
   }
 
@@ -174,7 +174,7 @@ public class UtilPlayer implements Listener, Runnable {
   @Override
   public void run() {
     for (final Player player : Bukkit.getOnlinePlayers()) {
-      attackCooldowns.put(player, player.getCooledAttackStrength(0F));
+      this.attackCooldowns.put(player, player.getCooledAttackStrength(0F));
     }
     if (!WAITING_PLAYERS.isEmpty()) {
       final Set<WaitingPlayer> removers = Sets.newHashSet();

@@ -1,6 +1,7 @@
 package com.gestankbratwurst.avarioncore.data;
 
 import com.gestankbratwurst.avarioncore.economy.EconomyAccount;
+import com.gestankbratwurst.avarioncore.economy.adminshops.AdminShop;
 import com.gestankbratwurst.avarioncore.friends.FriendAccount;
 import com.gestankbratwurst.avarioncore.friends.FriendsMainGUI;
 import com.gestankbratwurst.avarioncore.util.Msg;
@@ -73,7 +74,30 @@ public class AvarionPlayer {
   private final List<Msg.Pack> messages;
   private final ArrayDeque<ItemStack> itemQueue;
   private final Inventory inventory;
+  @Getter
+  private AdminShop currentlyVisitedShop = null;
 
+  public int getAmountInInventory(final ItemStack itemStack) {
+    final Player player = this.getPlayer();
+    final Inventory inv = player == null ? this.inventory : player.getInventory();
+    int amount = 0;
+
+    for (final ItemStack slotItem : inv) {
+      if (slotItem != null && slotItem.isSimilar(itemStack)) {
+        amount += slotItem.getAmount();
+      }
+    }
+
+    return amount;
+  }
+
+  public void setAsShopping(final AdminShop shop) {
+    this.currentlyVisitedShop = shop;
+  }
+
+  public void setAsNoLongerShopping() {
+    this.currentlyVisitedShop = null;
+  }
 
   public void openFriendGUI() {
     FriendsMainGUI.open(this);
@@ -150,6 +174,7 @@ public class AvarionPlayer {
 
   public void onQuit(final PlayerQuitEvent event) {
     final Player player = event.getPlayer();
+    this.setAsNoLongerShopping();
     this.inventory.setContents(player.getInventory().getContents());
   }
 
