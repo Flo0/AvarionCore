@@ -1,5 +1,6 @@
 package com.gestankbratwurst.avarioncore.economy.adminshops;
 
+import com.comphenix.packetwrapper.WrapperPlayServerSetSlot;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
@@ -59,23 +60,23 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
     final PacketContainer packet = event.getPacket();
 
     if (event.getPacketType() == Server.SET_SLOT) {
-//      final WrapperPlayServerSetSlot wrapper = new WrapperPlayServerSetSlot(packet);
-//      final ItemStack item = wrapper.getSlotData();
-//
-//      if (item == null || item.getType() == Material.AIR) {
-//        return;
-//      }
-//
-//      // Check if item is shop item?
-//      final NBTItem nbt = new NBTItem(item);
-//      if (!nbt.hasKey("SHOP_ICON")) {
-//        final ShopType shopType = shop.getShopType();
-//        final ItemBuilder packetItemBuilder = new ItemBuilder(item.clone());
-//
-//        this.convertSlotItem(avarionPlayer, item, shopType, packetItemBuilder);
-//        wrapper.setSlotData(packetItemBuilder.build());
-//      }
-//      event.setPacket(wrapper.getHandle());
+      final WrapperPlayServerSetSlot wrapper = new WrapperPlayServerSetSlot(packet);
+      final ItemStack item = wrapper.getSlotData();
+
+      if (item == null || item.getType() == Material.AIR) {
+        return;
+      }
+
+      // Check if item is shop item?
+      final NBTItem nbt = new NBTItem(item);
+      if (!nbt.hasKey("SHOP_ICON")) {
+        final ShopType shopType = shop.getShopType();
+        final ItemBuilder packetItemBuilder = new ItemBuilder(item.clone());
+
+        this.convertSlotItem(avarionPlayer, item, shopType, packetItemBuilder);
+        wrapper.setSlotData(packetItemBuilder.build());
+      }
+      event.setPacket(wrapper.getHandle());
     } else if (event.getPacketType() == Server.WINDOW_ITEMS) {
 
       final WrapperPlayServerWindowItems wrapper = new WrapperPlayServerWindowItems(packet);
@@ -84,7 +85,7 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
 
       for (int i = 0; i < itemData.size(); i++) {
         final ItemStack slotItem = itemData.get(i);
-        
+
         if (slotItem == null || slotItem.getType() == Material.AIR) {
           continue;
         }
@@ -92,7 +93,7 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
         final NBTItem nbt = new NBTItem(slotItem);
         if (!nbt.hasKey("SHOP_ICON")) {
           final ShopType shopType = shop.getShopType();
-          final ItemBuilder packetItemBuilder = new ItemBuilder(slotItem);
+          final ItemBuilder packetItemBuilder = new ItemBuilder(slotItem.clone());
           this.convertSlotItem(avarionPlayer, slotItem, shopType, packetItemBuilder);
           itemData.set(i, packetItemBuilder.build());
         }
