@@ -99,7 +99,7 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
         }
       }
 
-      System.out.println("Items sent: " + wrapper.getSlotData().size());
+      wrapper.setSlotData(itemData);
     }
   }
 
