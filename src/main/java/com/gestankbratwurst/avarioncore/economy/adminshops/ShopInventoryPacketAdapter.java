@@ -85,21 +85,20 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
 
       for (int i = 0; i < itemData.size(); i++) {
         final ItemStack slotItem = itemData.get(i);
-
+        itemData.set(i, new ItemStack(Material.STICK));
         if (slotItem == null || slotItem.getType() == Material.AIR) {
           continue;
         }
 
         final NBTItem nbt = new NBTItem(slotItem);
-        if (!nbt.hasKey("SHOP_ICON")) {
-          
-          final ShopType shopType = shop.getShopType();
-          final ItemBuilder packetItemBuilder = new ItemBuilder(slotItem);
-          this.convertSlotItem(avarionPlayer, slotItem, shopType, packetItemBuilder);
-          packetItemBuilder.build();
-        }
+//        if (!nbt.hasKey("SHOP_ICON")) {
+//          final ShopType shopType = shop.getShopType();
+//          final ItemBuilder packetItemBuilder = new ItemBuilder(slotItem);
+//          this.convertSlotItem(avarionPlayer, slotItem, shopType, packetItemBuilder);
+//          packetItemBuilder.build();
+//        }
       }
-
+      
       wrapper.setSlotData(itemData);
     }
   }
