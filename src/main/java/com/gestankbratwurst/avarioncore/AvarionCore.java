@@ -71,6 +71,7 @@ public final class AvarionCore extends JavaPlugin {
     this.protectionManager = new ProtectionManager(this);
 
     this.economyManager = new EconomyManager(this);
+    this.economyManager.getAdminShopManager().loadShops();
 
     this.webManager = new WebManager(this);
 
@@ -92,6 +93,7 @@ public final class AvarionCore extends JavaPlugin {
 
     UtilBlock.terminate(this);
     this.resourcepackModule.disable(this);
+    this.avarionIO.onShutdown();
   }
 
 }

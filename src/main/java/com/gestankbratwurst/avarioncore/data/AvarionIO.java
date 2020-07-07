@@ -35,6 +35,8 @@ public interface AvarionIO {
 
   void saveAdminShops(JsonObject jsonData);
 
+  void onShutdown();
+
   default AvarionPlayer loadPlayer(final UUID playerID) {
     final JsonObject data = this.loadPlayerData(playerID);
     if (data == null) {

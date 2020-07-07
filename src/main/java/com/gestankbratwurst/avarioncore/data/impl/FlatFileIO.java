@@ -130,6 +130,11 @@ public class FlatFileIO implements AvarionIO {
   }
 
   @Override
+  public void onShutdown() {
+
+  }
+
+  @Override
   public <I extends CommandIssuer> List<String> getAvarionPlayerNames(final CommandCompletionContext<I> commandCompletionContext) {
     return Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
   }

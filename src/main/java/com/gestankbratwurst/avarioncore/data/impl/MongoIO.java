@@ -39,8 +39,8 @@ public class MongoIO implements AvarionIO {
     final MongoCredential credential = MongoCredential.createCredential("god", "avarion_data", "38490htgn45etz79804".toCharArray());
     final MongoClientOptions clientOptions = new MongoClientOptions.Builder().build();
     final ServerAddress address = new ServerAddress("localhost", 27017);
-    final MongoClient mongoClient = new MongoClient(address, credential, clientOptions);
-    final MongoDatabase database = mongoClient.getDatabase("avarion_data");
+    this.mongoClient = new MongoClient(address, credential, clientOptions);
+    final MongoDatabase database = this.mongoClient.getDatabase("avarion_data");
     this.playerCollection = database.getCollection("players");
     this.worldCollection = database.getCollection("worlds");
     this.adminShopsCollection = database.getCollection("admin_shops");
@@ -54,6 +54,7 @@ public class MongoIO implements AvarionIO {
   }
 
   private final Gson gson;
+  private final MongoClient mongoClient;
   private final MongoCollection<Document> playerCollection;
   private final MongoCollection<Document> worldCollection;
   private final MongoCollection<Document> adminShopsCollection;
@@ -108,6 +109,11 @@ public class MongoIO implements AvarionIO {
     } else {
       this.adminShopsCollection.findOneAndReplace(new Document(), Document.parse(this.gson.toJson(jsonData)));
     }
+  }
+
+  @Override
+  public void onShutdown() {
+    this.mongoClient.close();
   }
 
   @Override

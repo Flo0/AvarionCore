@@ -19,7 +19,6 @@ public class EconomyManager {
     this.moneyItemHandler = new MoneyItemHandler(plugin);
     this.itemCostEvaluator = new ItemCostEvaluator();
     this.adminShopManager = new AdminShopManager(plugin);
-    this.adminShopManager.loadShops();
   }
 
   @Getter
