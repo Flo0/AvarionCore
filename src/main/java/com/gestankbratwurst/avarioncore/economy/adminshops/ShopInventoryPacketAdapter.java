@@ -92,6 +92,7 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
 
         final NBTItem nbt = new NBTItem(slotItem);
         if (!nbt.hasKey("SHOP_ICON")) {
+          
           final ShopType shopType = shop.getShopType();
           final ItemBuilder packetItemBuilder = new ItemBuilder(slotItem);
           this.convertSlotItem(avarionPlayer, slotItem, shopType, packetItemBuilder);
