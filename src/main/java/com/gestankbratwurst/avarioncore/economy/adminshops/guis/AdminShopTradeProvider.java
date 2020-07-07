@@ -47,6 +47,7 @@ public class AdminShopTradeProvider implements InventoryProvider {
     final AvarionPlayer avPlayer = AvarionCore.getInstance().getAvarionDataManager().getOnlineData(player.getUniqueId());
     Objects.requireNonNull(avPlayer);
     avPlayer.setAsNoLongerShopping();
+    AvarionCore.getInstance().getTaskManager().runBukkitSync(player::updateInventory);
   }
 
   @Override
