@@ -10,7 +10,6 @@ import com.gestankbratwurst.avarioncore.util.common.UtilMobs;
 import com.gestankbratwurst.avarioncore.util.common.UtilPlayer;
 import com.gestankbratwurst.avarioncore.util.items.display.ItemDisplayCompiler;
 import lombok.Getter;
-import net.crytec.inventoryapi.anvil.AnvilAPI;
 import net.crytec.libs.protocol.ProtocolAPI;
 import net.crytec.libs.protocol.holograms.impl.HologramManager;
 import net.crytec.libs.protocol.holograms.impl.infobar.InfoBar;
@@ -44,7 +43,6 @@ public class UtilModule {
     UtilBlock.init(plugin);
     UtilMobs.init(plugin);
     UtilItem.init(plugin);
-    new AnvilAPI(plugin);
     plugin.setDisplayCompiler(new ItemDisplayCompiler(plugin));
     plugin.getProtocolManager().addPacketListener(plugin.getDisplayCompiler());
     this.hologramManager = new HologramManager(plugin);

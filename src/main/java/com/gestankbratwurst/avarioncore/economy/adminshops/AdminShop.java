@@ -43,8 +43,8 @@ public class AdminShop {
     this.shopTitle = shopTitle;
     this.shopType = shopType;
     this.tradables = new ArrayList<>();
-    this.editorGUI = SmartInventory.builder().provider(new AdminShopEditorProvider(this)).size(5).title(shopTitle + " - Editor").build();
-    this.tradeGUI = SmartInventory.builder().provider(new AdminShopTradeProvider(this)).size(5).title(shopTitle).build();
+    this.editorGUI = SmartInventory.builder().provider(new AdminShopEditorProvider(this)).size(6).title(shopTitle + " - Editor").build();
+    this.tradeGUI = SmartInventory.builder().provider(new AdminShopTradeProvider(this)).size(6).title(shopTitle).build();
   }
 
   @Getter
@@ -55,12 +55,24 @@ public class AdminShop {
   private final SmartInventory tradeGUI;
   private final List<Tradable> tradables;
 
+  public List<Tradable> getTradables() {
+    return new ArrayList<>(this.tradables);
+  }
+
   public void openEditor(final Player player) {
     this.editorGUI.open(player);
   }
 
   public void openShopView(final Player player) {
     this.tradeGUI.open(player);
+  }
+
+  public void addTradable(final Tradable tradable) {
+    this.tradables.add(tradable);
+  }
+
+  public void removeTradable(final Tradable tradable) {
+    this.tradables.remove(tradable);
   }
 
   public JsonObject getAsJson() {
