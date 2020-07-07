@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import net.minecraft.server.v1_16_R1.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_16_R1.PacketPlayOutPlayerInfo.PlayerInfoData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,9 +34,7 @@ public class DirectTradeManager implements Listener {
   private final Map<UUID, Set<UUID>> receivedRequests;
 
   public void sendRequest(final Player from, final Player to) {
-
-    final PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo();
-    final PlayerInfoData info = packet.new PlayerInfoData(null, 0, null, null);
+    
   }
 
   public void hasRequest(final Player from, final Player to) {
