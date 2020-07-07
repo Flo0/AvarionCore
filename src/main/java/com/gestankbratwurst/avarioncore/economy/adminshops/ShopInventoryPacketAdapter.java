@@ -11,6 +11,7 @@ import com.gestankbratwurst.avarioncore.economy.EconomyAccount;
 import com.gestankbratwurst.avarioncore.economy.ItemCostEvaluator;
 import com.gestankbratwurst.avarioncore.util.items.ItemBuilder;
 import com.gestankbratwurst.avarioncore.util.nbtapi.NBTItem;
+import java.util.List;
 import net.crytec.libs.protocol.util.WrapperPlayClientSetCreativeSlot;
 import net.crytec.libs.protocol.util.WrapperPlayServerSetSlot;
 import net.crytec.libs.protocol.util.WrapperPlayServerWindowItems;
@@ -72,17 +73,7 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
         final ShopType shopType = shop.getShopType();
         final ItemBuilder packetItemBuilder = new ItemBuilder(item.clone());
 
-        if (shopType.isTradableHere(item)) {
-          final double price = this.costEvaluator.getPlayerSellCost(item);
-          final int stackAmount = item.getAmount();
-          final int all = avarionPlayer.getAmountInInventory(item);
-          packetItemBuilder.lore("", "§eLinksklick: §fVerkaufe §e1 §ffür §e" + price + " " + EconomyAccount.MONEY_PLURAL);
-          packetItemBuilder.lore("§eRechtsklick: §fVerkaufe §eStack §ffür §e" + (stackAmount * price) + " " + EconomyAccount.MONEY_PLURAL);
-          packetItemBuilder.lore("§eShift + Klick: §fVerkaufe §eAlle §ffür §e" + (all * price) + " " + EconomyAccount.MONEY_PLURAL);
-        } else {
-          packetItemBuilder.clearLore();
-          packetItemBuilder.name("§cDieses Item kann hier nicht verkauft werden.");
-        }
+        this.convertSlotItem(avarionPlayer, item, shopType, packetItemBuilder);
         wrapper.setSlotData(packetItemBuilder.build());
       }
       event.setPacket(wrapper.getHandle());
@@ -90,7 +81,41 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
 
       final WrapperPlayServerWindowItems wrapper = new WrapperPlayServerWindowItems(packet);
 
+      final List<ItemStack> itemData = wrapper.getSlotData();
+
+      for (int i = 0; i < itemData.size(); i++) {
+        final ItemStack slotItem = itemData.get(i);
+
+        if (slotItem == null || slotItem.getType() == Material.AIR) {
+          continue;
+        }
+
+        final NBTItem nbt = new NBTItem(slotItem);
+        if (!nbt.hasKey("SHOP_ICON")) {
+          final ShopType shopType = shop.getShopType();
+          final ItemBuilder packetItemBuilder = new ItemBuilder(slotItem);
+          this.convertSlotItem(avarionPlayer, slotItem, shopType, packetItemBuilder);
+          packetItemBuilder.build();
+        }
+      }
+
       System.out.println("Items sent: " + wrapper.getSlotData().size());
+    }
+  }
+
+  private void convertSlotItem(final AvarionPlayer avarionPlayer, final ItemStack slotItem, final ShopType shopType,
+      final ItemBuilder packetItemBuilder) {
+    if (shopType.isTradableHere(slotItem)) {
+      final double price = this.costEvaluator.getPlayerSellCost(slotItem);
+      final int stackAmount = slotItem.getAmount();
+      final int all = avarionPlayer.getAmountInInventory(slotItem);
+      packetItemBuilder.lore("", "§eLinksklick: §fVerkaufe §e1 §ffür §e" + price + " " + EconomyAccount.MONEY_PLURAL);
+      packetItemBuilder
+          .lore("§eRechtsklick: §fVerkaufe §eStack §ffür §e" + (stackAmount * price) + " " + EconomyAccount.MONEY_PLURAL);
+      packetItemBuilder.lore("§eShift + Klick: §fVerkaufe §eAlle §ffür §e" + (all * price) + " " + EconomyAccount.MONEY_PLURAL);
+    } else {
+      packetItemBuilder.clearLore();
+      packetItemBuilder.name("§cDieses Item kann hier nicht verkauft werden.");
     }
   }
 }
