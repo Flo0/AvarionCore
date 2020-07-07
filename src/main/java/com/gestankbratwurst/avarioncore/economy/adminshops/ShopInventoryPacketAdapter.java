@@ -13,13 +13,14 @@ import com.gestankbratwurst.avarioncore.util.items.ItemBuilder;
 import com.gestankbratwurst.avarioncore.util.nbtapi.NBTItem;
 import net.crytec.libs.protocol.util.WrapperPlayClientSetCreativeSlot;
 import net.crytec.libs.protocol.util.WrapperPlayServerSetSlot;
+import net.crytec.libs.protocol.util.WrapperPlayServerWindowItems;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class ShopInventoryPacketAdapter extends PacketAdapter {
 
   public ShopInventoryPacketAdapter(final AvarionCore plugin) {
-    super(plugin, Server.SET_SLOT);
+    super(plugin, Server.SET_SLOT, Server.WINDOW_ITEMS);
     this.avarionDataManager = plugin.getAvarionDataManager();
     this.costEvaluator = plugin.getEconomyManager().getItemCostEvaluator();
   }
@@ -85,6 +86,11 @@ public class ShopInventoryPacketAdapter extends PacketAdapter {
         wrapper.setSlotData(packetItemBuilder.build());
       }
       event.setPacket(wrapper.getHandle());
+    } else if (event.getPacketType() == Server.WINDOW_ITEMS) {
+
+      final WrapperPlayServerWindowItems wrapper = new WrapperPlayServerWindowItems(packet);
+
+      System.out.println("Items sent: " + wrapper.getSlotData().size());
     }
   }
 }
