@@ -72,7 +72,7 @@ public class AdminShopEditorProvider implements InventoryProvider {
             return Response.close();
           }
           this.adminShop.addTradable(new ItemTradable(item.asOne(), value));
-          this.reopen(pl);
+          AvarionCore.getInstance().getTaskManager().runBukkitSync(() -> this.reopen(pl));
           return Response.close();
         })
         .title("Kosten pro Stück")
