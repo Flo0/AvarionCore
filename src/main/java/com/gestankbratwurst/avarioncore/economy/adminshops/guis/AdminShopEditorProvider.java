@@ -71,7 +71,7 @@ public class AdminShopEditorProvider implements InventoryProvider {
             avarionPlayer.sendMessage("Shops", "Gib ne ordentliche Kommazahl ein. Du Bob.");
             return Response.close();
           }
-          this.adminShop.addTradable(new ItemTradable(item, value));
+          this.adminShop.addTradable(new ItemTradable(item.asOne(), value));
           this.reopen(pl);
           return Response.close();
         })
