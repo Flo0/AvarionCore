@@ -34,6 +34,7 @@ public class AdminShopNPC extends NPCVillager {
 
   }
 
+
   public AdminShopNPC(final JsonObject jsonObject) {
     super(UtilLoc.locFromString(jsonObject.get("Location").getAsString()));
     this.setProfession(Villager.Profession.valueOf(jsonObject.get("Profession").getAsString()));
@@ -41,7 +42,7 @@ public class AdminShopNPC extends NPCVillager {
     final AdminShopManager adminShopManager = AvarionCore.getInstance().getEconomyManager().getAdminShopManager();
     this.adminShop = adminShopManager.getAdminShop(jsonObject.get("AdminShop").getAsString());
     this.displayName = jsonObject.get("DisplayName").getAsString();
-    super.setDisplayname(this.displayName);
+    AvarionCore.getInstance().getTaskManager().runBukkitSync(() -> super.setDisplayname(this.displayName));
   }
 
   @Getter
