@@ -37,10 +37,11 @@ public class AdminShopEditorProvider implements InventoryProvider {
   private final AdminShop adminShop;
   private final ItemCostEvaluator itemCostEvaluator;
   private final AvarionDataManager avarionDataManager;
+  private InventoryContent content;
 
   @Override
   public void init(final Player player, final InventoryContent content) {
-
+    this.content = content;
   }
 
   @Override
@@ -72,7 +73,7 @@ public class AdminShopEditorProvider implements InventoryProvider {
             return Response.close();
           }
           this.adminShop.addTradable(new ItemTradable(item.asOne(), value));
-          AvarionCore.getInstance().getTaskManager().runBukkitSync(() -> this.reopen(pl));
+          AvarionCore.getInstance().getTaskManager().runBukkitSync(() -> this.reopen(pl, this.content));
           return Response.close();
         })
         .title("Kosten pro Stück")
