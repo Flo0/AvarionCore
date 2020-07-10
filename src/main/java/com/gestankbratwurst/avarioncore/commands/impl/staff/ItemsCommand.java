@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.Conditions;
 import co.aikar.commands.annotation.Subcommand;
 import com.gestankbratwurst.avarioncore.data.FutureAvarionPlayer;
 import com.gestankbratwurst.avarioncore.util.Msg;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,6 +24,11 @@ import org.bukkit.inventory.ItemStack;
 @CommandAlias("items")
 @CommandPermission("admin")
 public class ItemsCommand extends BaseCommand {
+
+  @Subcommand("colorthis")
+  public void onCol(final Player player, final String msg) {
+    player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
+  }
 
   @Subcommand("give")
   @CommandCompletion("@AvarionPlayerAsync")
