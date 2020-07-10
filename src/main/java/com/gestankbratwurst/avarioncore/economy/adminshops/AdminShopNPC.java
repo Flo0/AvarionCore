@@ -56,7 +56,13 @@ public class AdminShopNPC extends NPCVillager {
       Msg.error(player, "Shops", "Dieser NPC ist mit keinem Shop verlinkt und wird nach dem nächsten Neustart gelöscht.");
       return;
     }
-    AvarionCore.getInstance().getTaskManager().runBukkitSync(() -> this.adminShop.openShopView(player));
+    AvarionCore.getInstance().getTaskManager().runBukkitSync(() -> {
+      if (player.isSneaking() && player.hasPermission("admin")) {
+        this.adminShop.openEditor(player);
+        return;
+      }
+      this.adminShop.openShopView(player);
+    });
   }
 
   @Override

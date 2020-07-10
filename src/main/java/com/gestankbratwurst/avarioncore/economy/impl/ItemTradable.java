@@ -33,7 +33,7 @@ public class ItemTradable extends Tradable {
     super.sellable = sellable;
   }
 
-  public ItemTradable(final ItemStack tradeItem, final int buyCost) {
+  public ItemTradable(final ItemStack tradeItem, final double buyCost) {
     this(tradeItem, true, true);
     this.costToBuy = buyCost;
   }

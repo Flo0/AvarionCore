@@ -5,8 +5,10 @@ import com.gestankbratwurst.avarioncore.data.AvarionDataManager;
 import com.gestankbratwurst.avarioncore.data.AvarionPlayer;
 import com.gestankbratwurst.avarioncore.economy.ItemCostEvaluator;
 import com.gestankbratwurst.avarioncore.economy.adminshops.AdminShop;
-import com.gestankbratwurst.avarioncore.resourcepack.sounds.CustomSound;
+import com.gestankbratwurst.avarioncore.economy.impl.ItemTradable;
 import java.util.Objects;
+import net.crytec.inventoryapi.anvil.AnvilGUI;
+import net.crytec.inventoryapi.anvil.Response;
 import net.crytec.inventoryapi.api.InventoryContent;
 import net.crytec.inventoryapi.api.InventoryProvider;
 import org.bukkit.entity.Player;
@@ -46,6 +48,7 @@ public class AdminShopEditorProvider implements InventoryProvider {
 
   }
 
+
   @Override
   public void onBottomClick(final InventoryClickEvent event) {
     final AvarionPlayer avarionPlayer = this.avarionDataManager.getOnlineData(event.getWhoClicked().getUniqueId());
@@ -59,36 +62,22 @@ public class AdminShopEditorProvider implements InventoryProvider {
 
     Objects.requireNonNull(avarionPlayer);
 
-    if (this.adminShop.getShopType().isTradableHere(item)) {
-      final Player player = (Player) event.getWhoClicked();
-      final double basePrice = this.itemCostEvaluator.getPlayerSellCost(item);
-      if (event.isShiftClick()) {
-        final int amount = avarionPlayer.getAmountInInventory(item);
-        final ItemStack remover = item.clone();
-        remover.setAmount(amount);
-        inv.removeItem(remover);
-        avarionPlayer.getEconomyAccount().add(basePrice * amount);
-        CustomSound.COINS_SOUND.play(player, 0.665F, 1.2F);
-        CustomSound.COINS_SOUND.play(player, 0.665F, 1.0F);
-        CustomSound.COINS_SOUND.play(player, 0.665F, 0.8F);
-        CustomSound.COINS_SOUND.play(player, 0.665F, 0.6F);
-      } else if (event.isRightClick()) {
-        final int amount = item.getAmount();
-        inv.setItem(slot, null);
-        avarionPlayer.getEconomyAccount().add(basePrice * amount);
-        CustomSound.COINS_SOUND.play(player, 0.665F, 1F);
-        CustomSound.COINS_SOUND.play(player, 0.665F, 0.8F);
-      } else if (event.isLeftClick()) {
-        final int amount = item.getAmount();
-        if (amount == 1) {
-          inv.setItem(slot, null);
-        } else {
-          item.setAmount(item.getAmount() - 1);
-        }
-        avarionPlayer.getEconomyAccount().add(basePrice);
-        CustomSound.COINS_SOUND.play(player, 0.665F, 0.8F);
-      }
-    }
+    new AnvilGUI.Builder()
+        .onComplete((pl, input) -> {
+          final double value;
+          try {
+            value = Double.parseDouble(input);
+          } catch (final NumberFormatException e) {
+            avarionPlayer.sendMessage("Shops", "Gib ne ordentliche Kommazahl ein. Du Bob.");
+            return Response.close();
+          }
+          this.adminShop.addTradable(new ItemTradable(item, value));
+          this.reopen(pl);
+          return Response.close();
+        })
+        .title("Kosten pro Stück")
+        .text("" + this.itemCostEvaluator.getBuyCost(item))
+        .open(avarionPlayer.getPlayer());
 
     event.setCancelled(true);
   }

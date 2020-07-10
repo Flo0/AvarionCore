@@ -4,8 +4,10 @@ import com.gestankbratwurst.avarioncore.AvarionCore;
 import com.gestankbratwurst.avarioncore.data.AvarionDataManager;
 import com.gestankbratwurst.avarioncore.data.AvarionPlayer;
 import com.gestankbratwurst.avarioncore.economy.EconomyAccount;
+import com.gestankbratwurst.avarioncore.economy.ItemCostEvaluator;
 import com.gestankbratwurst.avarioncore.economy.abstraction.Tradable;
 import com.gestankbratwurst.avarioncore.economy.adminshops.AdminShop;
+import com.gestankbratwurst.avarioncore.resourcepack.sounds.CustomSound;
 import com.gestankbratwurst.avarioncore.util.Msg;
 import com.gestankbratwurst.avarioncore.util.common.UtilPlayer;
 import java.util.List;
@@ -37,10 +39,12 @@ public class AdminShopTradeProvider implements InventoryProvider {
   public AdminShopTradeProvider(final AdminShop adminShop) {
     this.adminShop = adminShop;
     this.avarionDataManager = AvarionCore.getInstance().getAvarionDataManager();
+    this.itemCostEvaluator = AvarionCore.getInstance().getEconomyManager().getItemCostEvaluator();
   }
 
   private final AdminShop adminShop;
   private final AvarionDataManager avarionDataManager;
+  private final ItemCostEvaluator itemCostEvaluator;
 
   @Override
   public void init(final Player player, final InventoryContent content) {
@@ -108,6 +112,37 @@ public class AdminShopTradeProvider implements InventoryProvider {
     }
 
     Objects.requireNonNull(avarionPlayer);
+
+    if (this.adminShop.getShopType().isTradableHere(item)) {
+      final Player player = (Player) event.getWhoClicked();
+      final double basePrice = this.itemCostEvaluator.getPlayerSellCost(item);
+      if (event.isShiftClick()) {
+        final int amount = avarionPlayer.getAmountInInventory(item);
+        final ItemStack remover = item.clone();
+        remover.setAmount(amount);
+        inv.removeItem(remover);
+        avarionPlayer.getEconomyAccount().add(basePrice * amount);
+        CustomSound.COINS_SOUND.play(player, 0.665F, 1.2F);
+        CustomSound.COINS_SOUND.play(player, 0.665F, 1.0F);
+        CustomSound.COINS_SOUND.play(player, 0.665F, 0.8F);
+        CustomSound.COINS_SOUND.play(player, 0.665F, 0.6F);
+      } else if (event.isRightClick()) {
+        final int amount = item.getAmount();
+        inv.setItem(slot, null);
+        avarionPlayer.getEconomyAccount().add(basePrice * amount);
+        CustomSound.COINS_SOUND.play(player, 0.665F, 1F);
+        CustomSound.COINS_SOUND.play(player, 0.665F, 0.8F);
+      } else if (event.isLeftClick()) {
+        final int amount = item.getAmount();
+        if (amount == 1) {
+          inv.setItem(slot, null);
+        } else {
+          item.setAmount(item.getAmount() - 1);
+        }
+        avarionPlayer.getEconomyAccount().add(basePrice);
+        CustomSound.COINS_SOUND.play(player, 0.665F, 0.8F);
+      }
+    }
 
     event.setCancelled(true);
   }
