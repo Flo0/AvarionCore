@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -34,7 +35,7 @@ public class DirectTradeManager implements Listener {
   private final Map<UUID, Set<UUID>> receivedRequests;
 
   public void sendRequest(final Player from, final Player to) {
-    
+
   }
 
   public void hasRequest(final Player from, final Player to) {
@@ -46,6 +47,16 @@ public class DirectTradeManager implements Listener {
   }
 
   public void initiateTrade(final Player sender, final Player receiver) {
+
+  }
+
+  @EventHandler
+  public void sendRequest(final PlayerInteractAtEntityEvent event) {
+    if (!(event.getRightClicked() instanceof Player)) {
+      return;
+    }
+
+    this.sentRequests.put(event.getPlayer().getUniqueId(), event.getRightClicked().getUniqueId());
 
   }
 
