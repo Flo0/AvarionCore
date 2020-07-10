@@ -36,7 +36,7 @@ public class AdminShopNPC extends NPCVillager {
 
   public AdminShopNPC(final JsonObject jsonObject) {
     super(UtilLoc.locFromString(jsonObject.get("Location").getAsString()));
-    this.displayName = jsonObject.get("DisplayName").getAsString();
+    this.displayName = ChatColor.translateAlternateColorCodes('&', jsonObject.get("DisplayName").getAsString());
     super.setDisplayname(this.displayName);
     this.setProfession(Villager.Profession.valueOf(jsonObject.get("Profession").getAsString()));
     this.setType(Villager.Type.valueOf(jsonObject.get("Type").getAsString()));
